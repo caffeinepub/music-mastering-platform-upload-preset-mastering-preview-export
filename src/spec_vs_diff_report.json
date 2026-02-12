@@ -1,75 +1,27 @@
 {
   "kind": "spec_vs_diff_report",
   "version": "1.0",
-  "generatedAt": "2026-02-12T04:26:37.481Z",
-  "summary": "The diff adds a frontend-only i18n system (pt-BR default, en switchable) with a provider/hook, localStorage persistence, and a header language switcher. Many UI strings were moved to translations, preset display names are localized while storing preset keys. However, there are remaining hard-coded strings (e.g., footer and image alt text), and the diff also introduces unrequested audio-engine/processing changes and broader theming changes that conflict with the stated non-goals.",
+  "generatedAt": "2026-02-12T09:58:17.195Z",
+  "summary": "Implemented a new PWA install entry point component and a visibility hook that hides the button when the app is considered installed and reacts to the `appinstalled` event. However, the current logic hides the entry point after a dismissed install prompt (and also when installation is not available), which conflicts with REQ-22 acceptance criteria.",
   "missing_requirements": [
     {
-      "id": "REQ-15",
-      "requirement": "The language switch control clearly indicates the current language (e.g., “PT” / “EN” or “Português” / “English”).",
-      "reason": "The added header control uses an icon-only trigger (Languages icon) with an SR-only label; the current language is only indicated inside the opened dropdown via a background highlight class, not clearly visible at-rest in the header.",
+      "id": "REQ-22",
+      "requirement": "If the user dismisses the install prompt or installation is not available, the install/download entry point remains visible and usable (no premature hiding).",
+      "reason": "`canInstall` is computed as `!isInstalled && !!deferredPrompt`, so when the user dismisses the prompt (or when `beforeinstallprompt` never fires), `deferredPrompt` is `null` and the component returns `null`, effectively hiding the entry point instead of keeping it visible/usable.",
       "evidence": [
-        "frontend/src/components/i18n/LanguageSwitcher.tsx"
-      ]
-    },
-    {
-      "id": "REQ-16",
-      "requirement": "Translate all user-facing UI strings across the app so no hard-coded English-only strings remain in main user flows.",
-      "reason": "The diff still contains hard-coded, non-i18n strings in user-facing UI (e.g., footer includes a hard-coded Portuguese word, and image alt text remains hard-coded in English). This indicates translation coverage is incomplete based on the provided diff excerpts.",
-      "evidence": [
-        "frontend/src/App.tsx",
-        "frontend/src/pages/Landing.tsx"
+        "frontend/src/hooks/usePwaInstallVisibility.ts",
+        "frontend/src/components/PwaInstallEntryPoint.tsx"
       ]
     }
   ],
-  "hallucinated_features": [
-    {
-      "description": "Expanded/changed Web Audio mastering engine processing chain (saturation, stereo width M/S processing), reference track loading, A/B/Reference switching, and RMS-based loudness matching.",
-      "reason": "BuildRequest explicitly lists changing audio processing behavior/presets/mastering engine logic as non-goals; these are substantial new audio features unrelated to i18n.",
-      "evidence": [
-        "frontend-file-summaries.txt (frontend/src/audio/engine.ts summary)",
-        "frontend-file-summaries.txt (frontend/src/audio/wavExport.ts summary)"
-      ]
-    },
-    {
-      "description": "Global visual theme and Tailwind/CSS changes (palette, utilities, shadows, animations) beyond i18n.",
-      "reason": "Not requested by REQ-14..REQ-17 (i18n + translations + localized presets).",
-      "evidence": [
-        "frontend-file-summaries.txt (frontend/src/index.css summary)",
-        "frontend-file-summaries.txt (frontend/tailwind.config.js summary)"
-      ]
-    },
-    {
-      "description": "Changes/additions to audio metadata validation/extraction logic.",
-      "reason": "Not part of i18n requirements and falls outside the requested scope.",
-      "evidence": [
-        "frontend-file-summaries.txt (frontend/src/audio/metadata.ts summary)"
-      ]
-    },
-    {
-      "description": "Behavioral changes to profile hooks/modal loading management ('prevent modal flash').",
-      "reason": "Not requested by the i18n requirements; while it may be beneficial, it is additional scope not specified in the BuildRequest.",
-      "evidence": [
-        "frontend-file-summaries.txt (frontend/src/hooks/useUserProfile.ts summary)"
-      ]
-    }
-  ],
+  "hallucinated_features": [],
   "confidence": 0.74,
   "changed_files": [
     "frontend-file-summaries.txt",
     "frontend/src/App.tsx",
-    "frontend/src/components/HelpFAQ.tsx",
-    "frontend/src/components/auth/LoginButton.tsx",
-    "frontend/src/components/auth/ProfileSetupModal.tsx",
-    "frontend/src/components/i18n/LanguageSwitcher.tsx",
-    "frontend/src/components/projects/ProjectsPanel.tsx",
-    "frontend/src/hooks/useProjects.ts",
-    "frontend/src/i18n/I18nProvider.tsx",
-    "frontend/src/i18n/presets.ts",
+    "frontend/src/components/PwaInstallEntryPoint.tsx",
+    "frontend/src/hooks/usePwaInstallVisibility.ts",
     "frontend/src/i18n/translations.ts",
-    "frontend/src/i18n/useI18n.ts",
-    "frontend/src/pages/Landing.tsx",
-    "frontend/src/pages/MasteringStudio.tsx",
     "project_state.json"
   ]
 }

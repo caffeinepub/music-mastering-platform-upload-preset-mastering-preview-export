@@ -11,9 +11,9 @@ import { MASTERING_PRESETS } from '../audio/presets';
 import { exportToWav } from '../audio/wavExport';
 import { useCreateProject, useGetAllProjects, useDeleteProject } from '../hooks/useProjects';
 import ProjectsPanel from '../components/projects/ProjectsPanel';
-import { Button } from '@/components/ui/button';
-import { Switch } from '@/components/ui/switch';
-import { Label } from '@/components/ui/label';
+import { Button } from '../components/ui/button';
+import { Switch } from '../components/ui/switch';
+import { Label } from '../components/ui/label';
 
 export default function MasteringStudio() {
   const { identity } = useInternetIdentity();
@@ -394,7 +394,7 @@ export default function MasteringStudio() {
                       <div className="flex items-center gap-3">
                         <Volume2 className="h-5 w-5 text-primary" />
                         <div>
-                          <Label htmlFor="loudness-matching" className="font-medium">
+                          <Label htmlFor="loudness-matching" className="font-medium cursor-pointer">
                             {t.studio.referenceSection.loudnessMatching}
                           </Label>
                           <p className="text-xs text-muted-foreground">
@@ -464,7 +464,7 @@ export default function MasteringStudio() {
               </div>
             )}
 
-            {/* Export */}
+            {/* Export Section */}
             {canExport && (
               <div className="bg-card rounded-lg border border-border p-6">
                 <h2 className="text-xl font-semibold mb-4">{t.studio.export.title}</h2>
@@ -478,7 +478,7 @@ export default function MasteringStudio() {
                   {isExporting ? (
                     <>
                       <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                      {t.studio.export.exporting} {Math.round(exportProgress)}%
+                      {t.studio.export.exporting} {Math.round(exportProgress * 100)}%
                     </>
                   ) : (
                     <>
@@ -491,7 +491,7 @@ export default function MasteringStudio() {
             )}
           </div>
 
-          {/* Projects Panel */}
+          {/* Projects Sidebar */}
           <div className="w-80 hidden lg:block">
             <ProjectsPanel />
           </div>

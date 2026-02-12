@@ -24,6 +24,12 @@ export interface Translations {
     saving: string;
   };
   
+  // PWA Install
+  pwaInstall: {
+    install: string;
+    installing: string;
+  };
+  
   // Landing Page
   landing: {
     hero: {
@@ -160,6 +166,10 @@ export const translations: Record<Language, Translations> = {
       namePlaceholder: 'Digite seu nome',
       continueButton: 'Continuar',
       saving: 'Salvando...',
+    },
+    pwaInstall: {
+      install: 'Baixar App',
+      installing: 'Instalando...',
     },
     landing: {
       hero: {
@@ -307,6 +317,10 @@ export const translations: Record<Language, Translations> = {
       continueButton: 'Continue',
       saving: 'Saving...',
     },
+    pwaInstall: {
+      install: 'Install App',
+      installing: 'Installing...',
+    },
     landing: {
       hero: {
         title: 'Professional Audio Mastering',
@@ -406,7 +420,7 @@ export const translations: Record<Language, Translations> = {
         },
         {
           question: 'What are the limitations?',
-          answer: 'Processing happens in your browser using Web Audio API. Very long tracks (over 10 minutes) or large files may take longer to process. For best results, use high-quality source files (WAV preferred). The mastering presets are designed for general use and may not suit every genre or mixing style.',
+          answer: 'Processing happens in your browser using the Web Audio API. Very long tracks (over 10 minutes) or large files may take longer to process. For best results, use high-quality source files (WAV preferred). Mastering presets are designed for general use and may not suit all genres or mixing styles.',
         },
         {
           question: 'Is my audio data stored?',
@@ -422,7 +436,7 @@ export const translations: Record<Language, Translations> = {
         },
         {
           question: 'What is Loudness Matching?',
-          answer: "Loudness matching automatically adjusts the reference track volume to match your mastered output's perceived loudness. This makes A/B comparison easier by removing volume differences. Note: This is an approximate RMS-based adjustment and depends on your source audio characteristics. It's not a true LUFS/EBU R128 measurement.",
+          answer: 'Loudness matching automatically adjusts the reference track volume to match the perceived loudness of your mastered output. This makes A/B comparison easier by removing volume differences. Note: This is an approximate adjustment based on RMS and depends on your source audio characteristics. It is not a true LUFS/EBU R128 measurement.',
         },
       ],
     },

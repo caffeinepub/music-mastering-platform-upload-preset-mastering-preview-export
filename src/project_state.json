@@ -1,11 +1,15 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 7,
+  "projectStateVersion": 13,
   "summary": "Plataforma para masterização de músicas com qualidade/sons profissionais, incluindo melhorias na cadeia de processamento (plugins) e um modo de referência com comparação a uma faixa masterizada.",
   "architectural_notes": [
-    "Adicionar camada de internacionalização (i18n) com seletor de idioma PT/EN e cobertura de todas as strings da UI (incluindo help/FAQ, descrições de presets e modo referência)."
+    "Adicionar camada de internacionalização (i18n) com seletor de idioma PT/EN e cobertura de todas as strings da UI (incluindo help/FAQ, descrições de presets e modo referência).",
+    "Adicionar suporte a PWA (manifest + service worker) para instalação e funcionamento offline, incluindo estratégia de cache para assets e páginas essenciais.",
+    "O botão de instalar PWA deve ser exibido apenas quando o app ainda não estiver instalado; após a instalação, ocultar o botão (ou trocar por estado “Instalado”)."
   ],
-  "known_issues": [],
+  "known_issues": [
+    "Build/publicação do app está falhando com erro interno de configuração, impedindo gerar versão estável e link de instalação."
+  ],
   "isFixRequest": false,
   "existing_features": [
     {
@@ -143,6 +147,54 @@
         "REQ-17"
       ],
       "version": 1
+    },
+    {
+      "id": "feature-add-progressive-web-app-pwa-support-so-the-web-app-can-be-installed-from-the-browser-and-can-load-offline-app-shell-static-assets-after-the-first-successful-visit",
+      "title": "Add Progressive Web App (PWA) support so the web app can be installed from the browser and can load offline (app shell + static assets) after the first successful visit.",
+      "reqIds": [
+        "REQ-18"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-visible-install-download-entry-point-in-the-ui-that-enables-users-to-install-the-pwa-or-shows-clear-manual-install-instructions-when-the-install-prompt-is-not-available",
+      "title": "Add a visible install/“download” entry point in the UI that enables users to install the PWA (or shows clear manual install instructions when the install prompt is not available).",
+      "reqIds": [
+        "REQ-19"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-a-credit-line-in-the-top-header-that-states-created-by-ferstar-jr",
+      "title": "Add a credit line in the top header that states: \"Created by FERSTAR JR\".",
+      "reqIds": [
+        "REQ-20"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-reproduce-the-current-deployment-build-failure-and-fix-the-underlying-configuration-code-issue-so-the-app-can-build-and-deploy-successfully-producing-a-stable-version-and-installation-link",
+      "title": "Reproduce the current deployment/build failure and fix the underlying configuration/code issue so the app can build and deploy successfully, producing a stable version and installation link.",
+      "reqIds": [
+        "REQ-21"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-update-the-existing-pwa-install-download-entry-point-so-it-automatically-hides-once-the-app-is-installed-and-stays-hidden-on-subsequent-visits-when-already-installed",
+      "title": "Update the existing PWA install/download entry point so it automatically hides once the app is installed (and stays hidden on subsequent visits when already installed).",
+      "reqIds": [
+        "REQ-22"
+      ],
+      "version": 1
+    },
+    {
+      "id": "feature-add-extend-i18n-strings-for-the-install-download-entry-point-label-any-short-helper-text-it-uses-so-the-new-updated-ui-text-is-localized-for-both-portuguese-pt-br-and-english-en-use-english-copy-for-the-en-locale-e-g-install-app",
+      "title": "Add/extend i18n strings for the install/download entry point (label + any short helper text it uses) so the new/updated UI text is localized for both Portuguese (pt-BR) and English (en). Use English copy for the en locale (e.g., \"Install app\").",
+      "reqIds": [
+        "REQ-23"
+      ],
+      "version": 1
     }
   ],
   "new_feature_requests": [
@@ -167,6 +219,24 @@
     {
       "id": "AR-4",
       "summary": "Adicionar suporte a idiomas (i18n): Português como padrão com opção de alternar para Inglês em todo o app (UI, ajuda/FAQ, presets e modo referência).",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-5",
+      "summary": "Habilitar modo PWA (instalável) com suporte offline e disponibilizar um link público para instalar/“baixar” o app via navegador.",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-6",
+      "summary": "Adicionar no topo (header) a informação/creditos: \"O aplicativo foi criado por FERSTAR JR\".",
+      "reqIds": [],
+      "status": "pending"
+    },
+    {
+      "id": "AR-7",
+      "summary": "Adicionar um botão de “baixar/instalar o app (PWA)” na UI que desaparece após o app ser instalado.",
       "reqIds": [],
       "status": "pending"
     }

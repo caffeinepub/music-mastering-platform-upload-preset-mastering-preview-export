@@ -1,6 +1,6 @@
 import { createRouter, createRoute, createRootRoute, RouterProvider, Outlet, useNavigate } from '@tanstack/react-router';
 import { ThemeProvider } from 'next-themes';
-import { Toaster } from '@/components/ui/sonner';
+import { Toaster } from 'sonner';
 import { I18nProvider } from './i18n/I18nProvider';
 import { useI18n } from './i18n/useI18n';
 import Landing from './pages/Landing';
@@ -8,6 +8,7 @@ import MasteringStudio from './pages/MasteringStudio';
 import LoginButton from './components/auth/LoginButton';
 import ProfileSetupModal from './components/auth/ProfileSetupModal';
 import LanguageSwitcher from './components/i18n/LanguageSwitcher';
+import PwaInstallEntryPoint from './components/PwaInstallEntryPoint';
 import { useInternetIdentity } from './hooks/useInternetIdentity';
 import { Music2, Heart } from 'lucide-react';
 
@@ -45,6 +46,7 @@ function Layout() {
                 {t.header.studio}
               </button>
             )}
+            <PwaInstallEntryPoint />
             <LanguageSwitcher />
             <LoginButton />
           </div>

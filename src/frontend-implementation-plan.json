@@ -1,135 +1,53 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "App-wide i18n with Portuguese default and runtime PT/EN switcher",
+  "title": "Auto-hide PWA install button once installed + i18n",
   "requirements": [
     {
-      "id": "REQ-14",
-      "summary": "Implement an app-wide i18n system with pt-BR default, runtime switching, and persisted language state via a provider/hook.",
+      "id": "REQ-22",
+      "summary": "Ensure the PWA install/download entry point hides automatically after installation and remains hidden on subsequent visits when already installed.",
       "acceptanceCriteria": [
-        "Portuguese (pt-BR) is the default language on first load.",
-        "A user can switch between Portuguese and English without reloading the page.",
-        "The selected language persists across page refreshes (e.g., via local storage or a persisted URL parameter).",
-        "The language state is accessible across all pages/components (single source of truth via a provider/hook)."
+        "When the PWA is already installed (e.g., the app is running in standalone display-mode), the install/download button is not rendered anywhere it normally appears.",
+        "When the user successfully completes installation (browser fires the appinstalled event), the install/download button disappears immediately without requiring a page refresh.",
+        "If the user dismisses the install prompt or installation is not available, the install/download entry point remains visible and usable (no premature hiding).",
+        "The hidden/visible state is correct after a full reload (no flicker of the button when already installed)."
+      ],
+      "file_operations": [
+        {
+          "path": "frontend/src/hooks/usePwaInstallVisibility.ts",
+          "operation": "create",
+          "description": "Create a hook that determines whether the app is already installed (e.g., display-mode standalone / iOS standalone) and tracks installation completion via the window appinstalled event; persist an installed flag locally to ensure correct state after reload with no flicker."
+        },
+        {
+          "path": "frontend/src/components/PwaInstallEntryPoint.tsx",
+          "operation": "create",
+          "description": "Create/extend the PWA install/download entry point UI to render only when installation is available AND the app is not installed, using the usePwaInstallVisibility hook; ensure it does not hide on prompt dismissal/unavailability and hides immediately when appinstalled fires. Compose existing UI components from frontend/src/components/ui (do not modify them)."
+        },
+        {
+          "path": "frontend/src/App.tsx",
+          "operation": "modify",
+          "description": "Wire the updated PwaInstallEntryPoint into the existing layout where the install/download entry point normally appears (e.g., header action area), ensuring it is not rendered when already installed and is removed immediately after installation."
+        }
+      ]
+    },
+    {
+      "id": "REQ-23",
+      "summary": "Localize the install/download entry point label and helper text for pt-BR and en via the existing i18n dictionaries.",
+      "acceptanceCriteria": [
+        "All user-visible text introduced or changed for the install/download entry point is sourced from the i18n dictionary (not hard-coded).",
+        "Both 'pt-BR' and 'en' locales have translations for the install/download entry point strings.",
+        "In the en locale, the primary action label is in English (e.g., \"Install app\")."
       ],
       "file_operations": [
         {
           "path": "frontend/src/i18n/translations.ts",
-          "operation": "create",
-          "description": "Create the i18n dictionaries for pt-BR and en (including shared keys for header, landing, studio, FAQ, projects, auth, profile modal, toasts/errors, and empty states)."
-        },
-        {
-          "path": "frontend/src/i18n/I18nProvider.tsx",
-          "operation": "create",
-          "description": "Add an I18nProvider React context that holds the active language, exposes a setter, provides a t() translator helper, and hydrates/persists language using localStorage (and optionally an URL parameter)."
-        },
-        {
-          "path": "frontend/src/i18n/useI18n.ts",
-          "operation": "create",
-          "description": "Add a useI18n() hook to access the i18n single source of truth (language, locale, t(), and setLanguage()) across all pages/components."
-        },
-        {
-          "path": "frontend/src/App.tsx",
           "operation": "modify",
-          "description": "Wrap the routed app layout in the I18nProvider so language state is available across all routes without modifying frontend/src/main.tsx."
-        }
-      ]
-    },
-    {
-      "id": "REQ-15",
-      "summary": "Add a visible language switch control in the global header and ensure header text updates immediately.",
-      "acceptanceCriteria": [
-        "A language toggle is available from the global header on both the Landing page and the Studio page.",
-        "The control clearly indicates the current language (e.g., “PT” / “EN” or “Português” / “English”).",
-        "Switching language updates the header text (e.g., tagline, “Studio”, auth button labels) immediately."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/components/i18n/LanguageSwitcher.tsx",
-          "operation": "create",
-          "description": "Create a LanguageSwitcher control that uses useI18n() to display current language and toggle between pt-BR and en at runtime."
+          "description": "Add/extend translation keys for the PWA install/download entry point (at minimum: label and any short helper text) in both 'pt-BR' and 'en' dictionaries, and update the Translations type accordingly."
         },
         {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/src/components/PwaInstallEntryPoint.tsx",
           "operation": "modify",
-          "description": "Add the LanguageSwitcher to the header area and replace header strings (tagline and the Studio navigation button label) with i18n keys so they update instantly when language changes."
-        },
-        {
-          "path": "frontend/src/components/auth/LoginButton.tsx",
-          "operation": "modify",
-          "description": "Localize the auth button labels (login/logout/loading) using useI18n() so the header auth UI updates immediately on language switch. (Do not edit the protected hooks; compose around them.)"
-        }
-      ]
-    },
-    {
-      "id": "REQ-16",
-      "summary": "Translate all user-facing UI strings across Landing, Studio, Help/FAQ, auth, profile setup, projects panel, toasts/errors, and empty/error states; localize date/time formatting.",
-      "acceptanceCriteria": [
-        "No hard-coded English-only strings remain in the main user flows (Landing, Studio, Help/FAQ, Projects, Auth/Profile modal).",
-        "Toast messages shown during upload, preset apply, playback errors, reference loading, exporting, and project deletion are localized in both languages.",
-        "Date/time formatting in the projects list uses the active locale (pt-BR vs en-US behavior)."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/pages/Landing.tsx",
-          "operation": "modify",
-          "description": "Replace all Landing page user-facing strings (hero title/subtitle, workflow section titles/descriptions, CTAs) with t() lookups from the i18n dictionaries."
-        },
-        {
-          "path": "frontend/src/pages/MasteringStudio.tsx",
-          "operation": "modify",
-          "description": "Replace all Studio UI labels/help text and all toast/error messages (upload validation, audio load success/failure, reference load/remove guidance, loudness matching copy, preset apply, playback errors, export success/failure) with i18n keys via useI18n()."
-        },
-        {
-          "path": "frontend/src/components/HelpFAQ.tsx",
-          "operation": "modify",
-          "description": "Localize the Help/FAQ title/subtitle and all FAQ question/answer content using i18n keys rather than hard-coded strings."
-        },
-        {
-          "path": "frontend/src/components/auth/ProfileSetupModal.tsx",
-          "operation": "modify",
-          "description": "Localize the profile setup modal strings (welcome title, instructions, field labels/placeholders, submit button states) using useI18n()."
-        },
-        {
-          "path": "frontend/src/components/projects/ProjectsPanel.tsx",
-          "operation": "modify",
-          "description": "Localize Projects panel strings (title, helper text, empty state, delete success/failure toasts) and update date/time formatting to use the active locale from useI18n() (pt-BR vs en-US behavior)."
-        }
-      ]
-    },
-    {
-      "id": "REQ-17",
-      "summary": "Localize preset display name/description while keeping preset keys and audio engine behavior stable; ensure stored preset label remains consistent and backwards-compatible.",
-      "acceptanceCriteria": [
-        "Preset selection UI displays localized preset name/description in the active language.",
-        "Preset keys used by the audio engine and project creation remain stable (no breaking changes to preset identifiers).",
-        "When creating/saving a project, the stored preset label is consistent and user-friendly (localized or a stable canonical label), and does not break existing project rendering."
-      ],
-      "file_operations": [
-        {
-          "path": "frontend/src/audio/presets.ts",
-          "operation": "modify",
-          "description": "Keep the existing preset keys unchanged and adjust preset metadata handling so UI can display localized name/description without impacting audio processing behavior."
-        },
-        {
-          "path": "frontend/src/i18n/presets.ts",
-          "operation": "create",
-          "description": "Add a preset localization mapping keyed by the stable preset keys (e.g., clean/warm/etc.) that provides name/description for pt-BR and en."
-        },
-        {
-          "path": "frontend/src/pages/MasteringStudio.tsx",
-          "operation": "modify",
-          "description": "Update the preset selection UI to render localized preset name/description (from i18n preset mapping) while continuing to apply presets by stable key; update preset-apply toast text to be localized."
-        },
-        {
-          "path": "frontend/src/hooks/useProjects.ts",
-          "operation": "modify",
-          "description": "Update project creation so the stored preset field is a stable canonical value (e.g., preset key) rather than an English-only label, while maintaining compatibility with existing stored values."
-        },
-        {
-          "path": "frontend/src/components/projects/ProjectsPanel.tsx",
-          "operation": "modify",
-          "description": "Render the project preset label in a localized, user-friendly way by mapping stored canonical preset keys to localized display strings, and gracefully handle legacy stored preset labels (previous English names) without breaking the list."
+          "description": "Update the install/download entry point to source its label and any helper text from the i18n hook (useI18n) and the new translations keys (no hard-coded strings)."
         }
       ]
     }
