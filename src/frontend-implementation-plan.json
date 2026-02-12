@@ -1,53 +1,42 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Auto-hide PWA install button once installed + i18n",
+  "title": "Mastering Studio mono/stereo-safe playback and WAV export",
   "requirements": [
     {
-      "id": "REQ-22",
-      "summary": "Ensure the PWA install/download entry point hides automatically after installation and remains hidden on subsequent visits when already installed.",
+      "id": "REQ-1",
+      "summary": "Make the realtime Web Audio playback chain mono/stereo compatible by conditionally bypassing stereo-width routing for mono buffers.",
       "acceptanceCriteria": [
-        "When the PWA is already installed (e.g., the app is running in standalone display-mode), the install/download button is not rendered anywhere it normally appears.",
-        "When the user successfully completes installation (browser fires the appinstalled event), the install/download button disappears immediately without requiring a page refresh.",
-        "If the user dismisses the install prompt or installation is not available, the install/download entry point remains visible and usable (no premature hiding).",
-        "The hidden/visible state is correct after a full reload (no flicker of the button when already installed)."
+        "With a mono (1-channel) audio file loaded, pressing Play in any available mode (Original and Mastered; Reference if provided) does not throw a runtime exception and audio plays as expected.",
+        "With a stereo (2-channel) audio file loaded, pressing Play continues to work and stereo-width processing (when enabled by preset) still functions without runtime errors.",
+        "If a mono file is loaded and stereo-width processing is not applicable, the app safely bypasses stereo-width nodes rather than crashing."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/hooks/usePwaInstallVisibility.ts",
-          "operation": "create",
-          "description": "Create a hook that determines whether the app is already installed (e.g., display-mode standalone / iOS standalone) and tracks installation completion via the window appinstalled event; persist an installed flag locally to ensure correct state after reload with no flicker."
-        },
-        {
-          "path": "frontend/src/components/PwaInstallEntryPoint.tsx",
-          "operation": "create",
-          "description": "Create/extend the PWA install/download entry point UI to render only when installation is available AND the app is not installed, using the usePwaInstallVisibility hook; ensure it does not hide on prompt dismissal/unavailability and hides immediately when appinstalled fires. Compose existing UI components from frontend/src/components/ui (do not modify them)."
-        },
-        {
-          "path": "frontend/src/App.tsx",
+          "path": "frontend/src/audio/engine.ts",
           "operation": "modify",
-          "description": "Wire the updated PwaInstallEntryPoint into the existing layout where the install/download entry point normally appears (e.g., header action area), ensuring it is not rendered when already installed and is removed immediately after installation."
+          "description": "Refactor the mastered playback routing so stereo-width (ChannelSplitter/ChannelMerger M/S path) is only connected when the loaded source buffer has 2 channels and the current preset enables stereo width; otherwise, route limiter directly to output gain to safely bypass stereo-width nodes for mono sources. Ensure connections are reconfigured safely (disconnect/reconnect) when preset changes or new audio is loaded so Play never throws due to invalid channel indexing."
+        },
+        {
+          "path": "frontend/src/pages/MasteringStudio.tsx",
+          "operation": "modify",
+          "description": "Add lightweight defensive handling around playback start to ensure the engine’s current routing reflects the loaded buffer’s channel count before starting mastered playback (e.g., trigger a re-apply of the selected preset or a routing refresh after load) so mono/stereo switching cannot leave the engine in an incompatible state."
         }
       ]
     },
     {
-      "id": "REQ-23",
-      "summary": "Localize the install/download entry point label and helper text for pt-BR and en via the existing i18n dictionaries.",
+      "id": "REQ-2",
+      "summary": "Make offline WAV export rendering mono/stereo compatible by building an offline mastering chain that only uses stereo-width splitter/merger when the source buffer is stereo.",
       "acceptanceCriteria": [
-        "All user-visible text introduced or changed for the install/download entry point is sourced from the i18n dictionary (not hard-coded).",
-        "Both 'pt-BR' and 'en' locales have translations for the install/download entry point strings.",
-        "In the en locale, the primary action label is in English (e.g., \"Install app\")."
+        "Exporting a mastered WAV from a mono source file completes successfully and downloads a valid WAV file.",
+        "Exporting a mastered WAV from a stereo source file continues to work as before.",
+        "No console runtime errors occur during export for either mono or stereo files."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/i18n/translations.ts",
+          "path": "frontend/src/audio/wavExport.ts",
           "operation": "modify",
-          "description": "Add/extend translation keys for the PWA install/download entry point (at minimum: label and any short helper text) in both 'pt-BR' and 'en' dictionaries, and update the Translations type accordingly."
-        },
-        {
-          "path": "frontend/src/components/PwaInstallEntryPoint.tsx",
-          "operation": "modify",
-          "description": "Update the install/download entry point to source its label and any helper text from the i18n hook (useI18n) and the new translations keys (no hard-coded strings)."
+          "description": "Update the offline mastering chain construction to be channel-count aware: when rendering mono (1-channel), bypass stereo-width processing entirely by connecting limiter directly to output gain (and then destination), and only create/connect the 2-channel splitter/merger stereo-width path when the source buffer has 2 channels and the preset enables stereo width."
         }
       ]
     }

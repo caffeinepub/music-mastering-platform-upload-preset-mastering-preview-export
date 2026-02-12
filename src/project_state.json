@@ -1,247 +1,32 @@
 {
   "schemaVersion": "1.0.0",
-  "projectStateVersion": 13,
-  "summary": "Plataforma para masterização de músicas com qualidade/sons profissionais, incluindo melhorias na cadeia de processamento (plugins) e um modo de referência com comparação a uma faixa masterizada.",
-  "architectural_notes": [
-    "Adicionar camada de internacionalização (i18n) com seletor de idioma PT/EN e cobertura de todas as strings da UI (incluindo help/FAQ, descrições de presets e modo referência).",
-    "Adicionar suporte a PWA (manifest + service worker) para instalação e funcionamento offline, incluindo estratégia de cache para assets e páginas essenciais.",
-    "O botão de instalar PWA deve ser exibido apenas quando o app ainda não estiver instalado; após a instalação, ocultar o botão (ou trocar por estado “Instalado”)."
-  ],
+  "projectStateVersion": 3,
+  "summary": "New project",
+  "architectural_notes": [],
   "known_issues": [
-    "Build/publicação do app está falhando com erro interno de configuração, impedindo gerar versão estável e link de instalação."
+    "App is encountering a runtime error when pressing Play (\"erro de execução de play\")."
   ],
-  "isFixRequest": false,
+  "isFixRequest": true,
   "existing_features": [
     {
-      "id": "feature-create-a-frontend-flow-that-lets-a-user-upload-an-audio-file-wav-mp3-validates-file-type-size-extracts-basic-metadata-duration-sample-rate-if-available-and-shows-a-track-details-panel",
-      "title": "Create a frontend flow that lets a user upload an audio file (WAV/MP3), validates file type/size, extracts basic metadata (duration, sample rate if available), and shows a track details panel.",
+      "id": "feature-fix-the-play-runtime-error-in-mastering-studio-by-making-the-audio-playback-chain-compatible-with-both-mono-and-stereo-source-files-e-g-do-not-create-use-a-2-channel-stereo-width-splitter-merger-path-when-the-loaded-audio-buffer-has-1-channel",
+      "title": "Fix the Play runtime error in Mastering Studio by making the audio playback chain compatible with both mono and stereo source files (e.g., do not create/use a 2-channel stereo-width splitter/merger path when the loaded audio buffer has 1 channel).",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-implement-in-browser-mastering-using-a-small-set-of-professional-style-presets-e-g-clean-warm-loud-bass-boost-using-web-audio-processing-eq-compression-limiter-and-provide-real-time-preview-playback-a-b-original-vs-mastered",
-      "title": "Implement in-browser mastering using a small set of professional-style presets (e.g., Clean, Warm, Loud, Bass Boost) using Web Audio processing (EQ, compression, limiter) and provide real-time preview playback (A/B: Original vs Mastered).",
+      "id": "feature-fix-wav-export-rendering-so-it-does-not-throw-runtime-errors-for-mono-source-files-by-making-the-offline-mastering-chain-compatible-with-the-source-buffer-channel-count-avoid-forcing-a-2-channel-splitter-merger-when-rendering-1-channel-audio",
+      "title": "Fix WAV export rendering so it does not throw runtime errors for mono source files by making the offline mastering chain compatible with the source buffer channel count (avoid forcing a 2-channel splitter/merger when rendering 1-channel audio).",
       "reqIds": [
         "REQ-2"
       ],
       "version": 1
-    },
-    {
-      "id": "feature-provide-export-download-of-the-mastered-result-as-a-wav-file-rendered-on-the-client-with-a-progress-indicator-and-a-clear-download-button-when-rendering-completes",
-      "title": "Provide export/download of the mastered result as a WAV file rendered on the client, with a progress indicator and a clear download button when rendering completes.",
-      "reqIds": [
-        "REQ-3"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-a-backend-data-model-and-api-to-store-a-list-of-mastering-projects-track-name-created-time-chosen-preset-status-and-allow-the-frontend-to-create-read-delete-projects-storing-the-audio-bytes-themselves-is-optional-if-not-stored-clearly-label-projects-as-metadata-only",
-      "title": "Add a backend data model and API to store a list of mastering projects (track name, created time, chosen preset, status) and allow the frontend to create/read/delete projects. Storing the audio bytes themselves is optional; if not stored, clearly label projects as metadata-only.",
-      "reqIds": [
-        "REQ-4"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-a-coherent-creative-visual-theme-for-a-music-mastering-product-and-apply-it-consistently-across-the-ui-layout-typography-colors-and-component-styling-avoid-blue-purple-as-primary-brand-colors",
-      "title": "Add a coherent, creative visual theme for a music mastering product and apply it consistently across the UI (layout, typography, colors, and component styling). Avoid blue/purple as primary brand colors.",
-      "reqIds": [
-        "REQ-5"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-a-simple-landing-dashboard-screen-that-explains-the-workflow-in-english-upload-choose-preset-preview-export-and-links-to-the-mastering-screen",
-      "title": "Add a simple landing/dashboard screen that explains the workflow in English (Upload → Choose preset → Preview → Export) and links to the mastering screen.",
-      "reqIds": [
-        "REQ-6"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-basic-help-text-and-safeguards-for-audio-mastering-expectations-e-g-presets-are-approximations-output-depends-on-source-and-surface-processing-limitations-clearly-in-english",
-      "title": "Add basic help text and safeguards for audio mastering expectations (e.g., presets are approximations, output depends on source) and surface processing limitations clearly in English.",
-      "reqIds": [
-        "REQ-7"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-render-generated-static-images-from-frontend-public-assets-generated-in-the-ui-logo-hero-illustration-as-part-of-the-theme",
-      "title": "Render generated static images from frontend/public/assets/generated in the UI (logo + hero/illustration) as part of the theme.",
-      "reqIds": [
-        "REQ-8"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-expand-the-in-browser-mastering-chain-to-include-additional-plugin-style-processors-beyond-the-current-3-band-eq-compressor-limiter-output-gain-and-make-the-new-processors-usable-from-presets",
-      "title": "Expand the in-browser mastering chain to include additional “plugin-style” processors beyond the current 3-band EQ + compressor + limiter + output gain, and make the new processors usable from presets.",
-      "reqIds": [
-        "REQ-9"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-improve-mastering-preset-quality-by-refining-existing-presets-and-adding-new-presets-that-leverage-the-expanded-processing-chain-with-clear-english-names-and-descriptions",
-      "title": "Improve mastering preset quality by refining existing presets and adding new presets that leverage the expanded processing chain, with clear English names and descriptions.",
-      "reqIds": [
-        "REQ-10"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-a-reference-mode-that-lets-the-user-load-a-second-audio-file-wav-mp3-as-a-reference-track-and-quickly-compare-it-against-the-user-s-mastered-output-for-inspiration",
-      "title": "Add a “Reference Mode” that lets the user load a second audio file (WAV/MP3) as a reference track and quickly compare it against the user’s mastered output for inspiration.",
-      "reqIds": [
-        "REQ-11"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-implement-basic-loudness-matching-for-reference-mode-to-reduce-the-louder-sounds-better-bias-during-a-b-comparison-with-a-simple-user-control-to-enable-disable-matching",
-      "title": "Implement basic loudness matching for Reference Mode to reduce the “louder sounds better” bias during A/B comparison, with a simple user control to enable/disable matching.",
-      "reqIds": [
-        "REQ-12"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-the-help-faq-content-to-include-an-english-explanation-of-reference-mode-and-loudness-matching-including-limitations-e-g-loudness-matching-is-approximate",
-      "title": "Update the Help/FAQ content to include an English explanation of Reference Mode and loudness matching, including limitations (e.g., loudness matching is approximate).",
-      "reqIds": [
-        "REQ-13"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-an-app-wide-internationalization-i18n-system-with-portuguese-pt-br-as-the-default-language-and-an-option-to-switch-to-english-en-at-runtime",
-      "title": "Add an app-wide internationalization (i18n) system with Portuguese (pt-BR) as the default language and an option to switch to English (en) at runtime.",
-      "reqIds": [
-        "REQ-14"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-a-visible-language-switch-control-in-the-app-header-that-allows-toggling-between-portuguese-and-english",
-      "title": "Add a visible language switch control in the app header that allows toggling between Portuguese and English.",
-      "reqIds": [
-        "REQ-15"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-translate-all-user-facing-ui-strings-across-the-app-to-support-both-portuguese-pt-br-and-english-en-including-landing-page-mastering-studio-page-all-labels-help-text-help-faq-content-authentication-ui-profile-setup-modal-project-list-panel-toast-error-messages-and-any-empty-error-states",
-      "title": "Translate all user-facing UI strings across the app to support both Portuguese (pt-BR) and English (en), including: Landing page, Mastering Studio page (all labels/help text), Help/FAQ content, authentication UI, profile setup modal, project list panel, toast/error messages, and any empty/error states.",
-      "reqIds": [
-        "REQ-16"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-ensure-preset-display-strings-preset-name-and-description-are-localized-for-both-portuguese-and-english-while-keeping-existing-preset-keys-behavior-unchanged",
-      "title": "Ensure preset display strings (preset name and description) are localized for both Portuguese and English, while keeping existing preset keys/behavior unchanged.",
-      "reqIds": [
-        "REQ-17"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-progressive-web-app-pwa-support-so-the-web-app-can-be-installed-from-the-browser-and-can-load-offline-app-shell-static-assets-after-the-first-successful-visit",
-      "title": "Add Progressive Web App (PWA) support so the web app can be installed from the browser and can load offline (app shell + static assets) after the first successful visit.",
-      "reqIds": [
-        "REQ-18"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-a-visible-install-download-entry-point-in-the-ui-that-enables-users-to-install-the-pwa-or-shows-clear-manual-install-instructions-when-the-install-prompt-is-not-available",
-      "title": "Add a visible install/“download” entry point in the UI that enables users to install the PWA (or shows clear manual install instructions when the install prompt is not available).",
-      "reqIds": [
-        "REQ-19"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-a-credit-line-in-the-top-header-that-states-created-by-ferstar-jr",
-      "title": "Add a credit line in the top header that states: \"Created by FERSTAR JR\".",
-      "reqIds": [
-        "REQ-20"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-reproduce-the-current-deployment-build-failure-and-fix-the-underlying-configuration-code-issue-so-the-app-can-build-and-deploy-successfully-producing-a-stable-version-and-installation-link",
-      "title": "Reproduce the current deployment/build failure and fix the underlying configuration/code issue so the app can build and deploy successfully, producing a stable version and installation link.",
-      "reqIds": [
-        "REQ-21"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-update-the-existing-pwa-install-download-entry-point-so-it-automatically-hides-once-the-app-is-installed-and-stays-hidden-on-subsequent-visits-when-already-installed",
-      "title": "Update the existing PWA install/download entry point so it automatically hides once the app is installed (and stays hidden on subsequent visits when already installed).",
-      "reqIds": [
-        "REQ-22"
-      ],
-      "version": 1
-    },
-    {
-      "id": "feature-add-extend-i18n-strings-for-the-install-download-entry-point-label-any-short-helper-text-it-uses-so-the-new-updated-ui-text-is-localized-for-both-portuguese-pt-br-and-english-en-use-english-copy-for-the-en-locale-e-g-install-app",
-      "title": "Add/extend i18n strings for the install/download entry point (label + any short helper text it uses) so the new/updated UI text is localized for both Portuguese (pt-BR) and English (en). Use English copy for the en locale (e.g., \"Install app\").",
-      "reqIds": [
-        "REQ-23"
-      ],
-      "version": 1
     }
   ],
-  "new_feature_requests": [
-    {
-      "id": "AR-1",
-      "summary": "Criar uma plataforma para masterizar músicas com qualidade profissional.",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-2",
-      "summary": "Adicionar mais plugins/processadores e melhorar a qualidade da masterização (cadeia de EQ/comp/limiter e presets mais refinados).",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-3",
-      "summary": "Adicionar modo referência: carregar uma música já masterizada para servir de inspiração e permitir comparação com a faixa do usuário.",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-4",
-      "summary": "Adicionar suporte a idiomas (i18n): Português como padrão com opção de alternar para Inglês em todo o app (UI, ajuda/FAQ, presets e modo referência).",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-5",
-      "summary": "Habilitar modo PWA (instalável) com suporte offline e disponibilizar um link público para instalar/“baixar” o app via navegador.",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-6",
-      "summary": "Adicionar no topo (header) a informação/creditos: \"O aplicativo foi criado por FERSTAR JR\".",
-      "reqIds": [],
-      "status": "pending"
-    },
-    {
-      "id": "AR-7",
-      "summary": "Adicionar um botão de “baixar/instalar o app (PWA)” na UI que desaparece após o app ser instalado.",
-      "reqIds": [],
-      "status": "pending"
-    }
-  ],
-  "projectName": "Music mastering platform (upload, preset mastering, preview, export)",
+  "new_feature_requests": [],
+  "projectName": "Fix runtime error when pressing Play in Mastering Studio",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }

@@ -31,6 +31,7 @@ export class MasteringEngine {
   private currentMode: 'original' | 'mastered' | 'reference' = 'original';
   private currentPreset: MasteringPreset | null = null;
   private loudnessMatchingEnabled: boolean = false;
+  private isStereoWidthConnected: boolean = false;
 
   constructor() {
     this.audioContext = new AudioContext();
@@ -79,27 +80,12 @@ export class MasteringEngine {
     this.referenceLoudnessGain = this.audioContext.createGain();
     this.referenceLoudnessGain.gain.value = 1;
     
-    // Connect mastered chain
+    // Connect base mastered chain (up to limiter)
     this.lowShelfFilter.connect(this.midPeakFilter);
     this.midPeakFilter.connect(this.highShelfFilter);
     this.highShelfFilter.connect(this.saturationNode);
     this.saturationNode.connect(this.compressor);
     this.compressor.connect(this.limiter);
-    this.limiter.connect(this.stereoWidthSplitter);
-    
-    // Stereo width processing
-    this.stereoWidthSplitter.connect(this.stereoWidthGainL, 0);
-    this.stereoWidthSplitter.connect(this.stereoWidthGainR, 1);
-    this.stereoWidthGainL.connect(this.stereoWidthMidGain);
-    this.stereoWidthGainR.connect(this.stereoWidthMidGain);
-    this.stereoWidthGainL.connect(this.stereoWidthSideGain);
-    this.stereoWidthGainR.connect(this.stereoWidthSideGain);
-    this.stereoWidthMidGain.connect(this.stereoWidthMerger, 0, 0);
-    this.stereoWidthMidGain.connect(this.stereoWidthMerger, 0, 1);
-    this.stereoWidthSideGain.connect(this.stereoWidthMerger, 0, 0);
-    this.stereoWidthSideGain.connect(this.stereoWidthMerger, 0, 1);
-    
-    this.stereoWidthMerger.connect(this.outputGainNode);
     
     // Connect reference chain
     this.referenceGainNode.connect(this.referenceLoudnessGain);
@@ -135,10 +121,56 @@ export class MasteringEngine {
     this.stereoWidthSideGain.gain.value = side;
   }
 
+  private configureMasteredChainRouting(): void {
+    // Disconnect existing connections from limiter
+    try {
+      this.limiter.disconnect();
+      this.stereoWidthSplitter.disconnect();
+      this.stereoWidthGainL.disconnect();
+      this.stereoWidthGainR.disconnect();
+      this.stereoWidthMidGain.disconnect();
+      this.stereoWidthSideGain.disconnect();
+      this.stereoWidthMerger.disconnect();
+    } catch (e) {
+      // Nodes may not be connected yet
+    }
+
+    const isStereo = this.sourceBuffer && this.sourceBuffer.numberOfChannels === 2;
+    const useStereoWidth = isStereo && this.currentPreset?.stereoWidth?.enabled;
+
+    if (useStereoWidth) {
+      // Connect stereo width processing
+      this.limiter.connect(this.stereoWidthSplitter);
+      
+      this.stereoWidthSplitter.connect(this.stereoWidthGainL, 0);
+      this.stereoWidthSplitter.connect(this.stereoWidthGainR, 1);
+      this.stereoWidthGainL.connect(this.stereoWidthMidGain);
+      this.stereoWidthGainR.connect(this.stereoWidthMidGain);
+      this.stereoWidthGainL.connect(this.stereoWidthSideGain);
+      this.stereoWidthGainR.connect(this.stereoWidthSideGain);
+      this.stereoWidthMidGain.connect(this.stereoWidthMerger, 0, 0);
+      this.stereoWidthMidGain.connect(this.stereoWidthMerger, 0, 1);
+      this.stereoWidthSideGain.connect(this.stereoWidthMerger, 0, 0);
+      this.stereoWidthSideGain.connect(this.stereoWidthMerger, 0, 1);
+      
+      this.stereoWidthMerger.connect(this.outputGainNode);
+      this.isStereoWidthConnected = true;
+    } else {
+      // Bypass stereo width - connect limiter directly to output
+      this.limiter.connect(this.outputGainNode);
+      this.isStereoWidthConnected = false;
+    }
+  }
+
   async loadAudio(file: File): Promise<void> {
     try {
       const arrayBuffer = await file.arrayBuffer();
       this.sourceBuffer = await this.audioContext.decodeAudioData(arrayBuffer);
+      
+      // Reconfigure routing based on channel count
+      if (this.currentPreset) {
+        this.configureMasteredChainRouting();
+      }
     } catch (error) {
       throw new Error('Failed to decode audio file. Please ensure it is a valid WAV or MP3 file.');
     }
@@ -260,6 +292,9 @@ export class MasteringEngine {
       this.applyStereoWidth(1.0);
     }
     
+    // Reconfigure routing based on channel count and preset
+    this.configureMasteredChainRouting();
+    
     // Apply output gain
     this.outputGainNode.gain.value = preset.outputGain;
     
@@ -282,6 +317,11 @@ export class MasteringEngine {
     // Resume audio context if suspended
     if (this.audioContext.state === 'suspended') {
       await this.audioContext.resume();
+    }
+
+    // Ensure routing is configured for mastered mode
+    if (mode === 'mastered' && this.currentPreset) {
+      this.configureMasteredChainRouting();
     }
 
     // Create new source node

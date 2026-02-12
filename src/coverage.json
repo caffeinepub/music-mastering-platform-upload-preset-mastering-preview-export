@@ -1,7 +1,7 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-12T09:58:17.198Z",
+  "generatedAt": "2026-02-12T19:34:44.633Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
@@ -11,31 +11,27 @@
     "implemented": 2,
     "items": [
       {
-        "id": "REQ-22",
-        "summary": "Update the existing PWA install/download entry point so it automatically hides once the app is installed (and stays hidden on subsequent visits when already installed).",
+        "id": "REQ-1",
+        "summary": "Fix the Play runtime error in Mastering Studio by making the audio playback chain compatible with both mono and stereo source files (e.g., do not create/use a 2-channel stereo-width splitter/merger path when the loaded audio buffer has 1 channel).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/hooks/usePwaInstallVisibility.ts",
-          "frontend/src/components/PwaInstallEntryPoint.tsx",
-          "frontend/src/App.tsx"
+          "frontend/src/audio/engine.ts",
+          "frontend/src/pages/MasteringStudio.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/hooks/usePwaInstallVisibility.ts",
-          "frontend/src/components/PwaInstallEntryPoint.tsx",
-          "frontend/src/App.tsx"
+          "frontend/src/audio/engine.ts",
+          "frontend/src/pages/MasteringStudio.tsx"
         ]
       },
       {
-        "id": "REQ-23",
-        "summary": "Add/extend i18n strings for the install/download entry point (label + any short helper text it uses) so the new/updated UI text is localized for both Portuguese (pt-BR) and English (en). Use English copy for the en locale (e.g., \"Install app\").",
+        "id": "REQ-2",
+        "summary": "Fix WAV export rendering so it does not throw runtime errors for mono source files by making the offline mastering chain compatible with the source buffer channel count (avoid forcing a 2-channel splitter/merger when rendering 1-channel audio).",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/i18n/translations.ts",
-          "frontend/src/components/PwaInstallEntryPoint.tsx"
+          "frontend/src/audio/wavExport.ts"
         ],
         "matchedFiles": [
-          "frontend/src/i18n/translations.ts",
-          "frontend/src/components/PwaInstallEntryPoint.tsx"
+          "frontend/src/audio/wavExport.ts"
         ]
       }
     ]
@@ -45,10 +41,9 @@
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/App.tsx",
-    "frontend/src/components/PwaInstallEntryPoint.tsx",
-    "frontend/src/hooks/usePwaInstallVisibility.ts",
-    "frontend/src/i18n/translations.ts",
+    "frontend/src/audio/engine.ts",
+    "frontend/src/audio/wavExport.ts",
+    "frontend/src/pages/MasteringStudio.tsx",
     "project_state.json",
     "scratch/component-selection.json",
     "spec.md",

@@ -22,6 +22,9 @@ export async function exportToWav(
 
   onProgress?.(20);
 
+  const isStereo = sourceBuffer.numberOfChannels === 2;
+  const useStereoWidth = isStereo && preset.stereoWidth?.enabled;
+
   // Create processing chain in offline context
   const source = offlineContext.createBufferSource();
   source.buffer = sourceBuffer;
@@ -81,15 +84,27 @@ export async function exportToWav(
   limiter.attack.value = 0.001;
   limiter.release.value = preset.limiter.release;
 
-  // Stereo width
-  const stereoSplitter = offlineContext.createChannelSplitter(2);
-  const stereoMerger = offlineContext.createChannelMerger(2);
-  const stereoGainL = offlineContext.createGain();
-  const stereoGainR = offlineContext.createGain();
-  const stereoMidGain = offlineContext.createGain();
-  const stereoSideGain = offlineContext.createGain();
+  // Output gain
+  const outputGain = offlineContext.createGain();
+  outputGain.gain.value = preset.outputGain;
 
-  if (preset.stereoWidth?.enabled) {
+  // Connect base chain
+  source.connect(lowShelf);
+  lowShelf.connect(midPeak);
+  midPeak.connect(highShelf);
+  highShelf.connect(saturation);
+  saturation.connect(compressor);
+  compressor.connect(limiter);
+
+  if (useStereoWidth && preset.stereoWidth) {
+    // Stereo width processing for stereo files
+    const stereoSplitter = offlineContext.createChannelSplitter(2);
+    const stereoMerger = offlineContext.createChannelMerger(2);
+    const stereoGainL = offlineContext.createGain();
+    const stereoGainR = offlineContext.createGain();
+    const stereoMidGain = offlineContext.createGain();
+    const stereoSideGain = offlineContext.createGain();
+
     const width = preset.stereoWidth.width;
     const mid = 0.5;
     const side = (width - 1) * 0.5;
@@ -98,39 +113,27 @@ export async function exportToWav(
     stereoGainR.gain.value = 0.5;
     stereoMidGain.gain.value = mid;
     stereoSideGain.gain.value = side;
+
+    limiter.connect(stereoSplitter);
+    
+    // Stereo width connections
+    stereoSplitter.connect(stereoGainL, 0);
+    stereoSplitter.connect(stereoGainR, 1);
+    stereoGainL.connect(stereoMidGain);
+    stereoGainR.connect(stereoMidGain);
+    stereoGainL.connect(stereoSideGain);
+    stereoGainR.connect(stereoSideGain);
+    stereoMidGain.connect(stereoMerger, 0, 0);
+    stereoMidGain.connect(stereoMerger, 0, 1);
+    stereoSideGain.connect(stereoMerger, 0, 0);
+    stereoSideGain.connect(stereoMerger, 0, 1);
+    
+    stereoMerger.connect(outputGain);
   } else {
-    stereoGainL.gain.value = 0.5;
-    stereoGainR.gain.value = 0.5;
-    stereoMidGain.gain.value = 0.5;
-    stereoSideGain.gain.value = 0;
+    // Bypass stereo width for mono files or when disabled
+    limiter.connect(outputGain);
   }
 
-  // Output gain
-  const outputGain = offlineContext.createGain();
-  outputGain.gain.value = preset.outputGain;
-
-  // Connect chain
-  source.connect(lowShelf);
-  lowShelf.connect(midPeak);
-  midPeak.connect(highShelf);
-  highShelf.connect(saturation);
-  saturation.connect(compressor);
-  compressor.connect(limiter);
-  limiter.connect(stereoSplitter);
-  
-  // Stereo width connections
-  stereoSplitter.connect(stereoGainL, 0);
-  stereoSplitter.connect(stereoGainR, 1);
-  stereoGainL.connect(stereoMidGain);
-  stereoGainR.connect(stereoMidGain);
-  stereoGainL.connect(stereoSideGain);
-  stereoGainR.connect(stereoSideGain);
-  stereoMidGain.connect(stereoMerger, 0, 0);
-  stereoMidGain.connect(stereoMerger, 0, 1);
-  stereoSideGain.connect(stereoMerger, 0, 0);
-  stereoSideGain.connect(stereoMerger, 0, 1);
-  
-  stereoMerger.connect(outputGain);
   outputGain.connect(offlineContext.destination);
 
   source.start(0);

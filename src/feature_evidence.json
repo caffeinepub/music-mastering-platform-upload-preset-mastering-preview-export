@@ -2,12 +2,11 @@
   "kind": "feature_evidence_report",
   "features": [
     {
-      "featureId": "feature-update-the-existing-pwa-install-download-entry-point-so-it-automatically-hides-once-the-app-is-installed-and-stays-hidden-on-subsequent-visits-when-already-installed",
-      "featureTitle": "Update the existing PWA install/download entry point so it automatically hides once the app is installed (and stays hidden on subsequent visits when already installed).",
+      "featureId": "feature-fix-the-play-runtime-error-in-mastering-studio-by-making-the-audio-playback-chain-compatible-with-both-mono-and-stereo-source-files-e-g-do-not-create-use-a-2-channel-stereo-width-splitter-merger-path-when-the-loaded-audio-buffer-has-1-channel",
+      "featureTitle": "Fix the Play runtime error in Mastering Studio by making the audio playback chain compatible with both mono and stereo source files (e.g., do not create/use a 2-channel stereo-width splitter/merger path when the loaded audio buffer has 1 channel).",
       "files": [
-        "frontend/src/App.tsx",
-        "frontend/src/components/PwaInstallEntryPoint.tsx",
-        "frontend/src/hooks/usePwaInstallVisibility.ts"
+        "frontend/src/audio/engine.ts",
+        "frontend/src/pages/MasteringStudio.tsx"
       ],
       "components": [
         "authorization@4.0.0",
@@ -18,16 +17,15 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-22"
+        "REQ-1"
       ],
       "confidence": "high"
     },
     {
-      "featureId": "feature-add-extend-i18n-strings-for-the-install-download-entry-point-label-any-short-helper-text-it-uses-so-the-new-updated-ui-text-is-localized-for-both-portuguese-pt-br-and-english-en-use-english-copy-for-the-en-locale-e-g-install-app",
-      "featureTitle": "Add/extend i18n strings for the install/download entry point (label + any short helper text it uses) so the new/updated UI text is localized for both Portuguese (pt-BR) and English (en). Use English copy for the en locale (e.g., \"Install app\").",
+      "featureId": "feature-fix-wav-export-rendering-so-it-does-not-throw-runtime-errors-for-mono-source-files-by-making-the-offline-mastering-chain-compatible-with-the-source-buffer-channel-count-avoid-forcing-a-2-channel-splitter-merger-when-rendering-1-channel-audio",
+      "featureTitle": "Fix WAV export rendering so it does not throw runtime errors for mono source files by making the offline mastering chain compatible with the source buffer channel count (avoid forcing a 2-channel splitter/merger when rendering 1-channel audio).",
       "files": [
-        "frontend/src/components/PwaInstallEntryPoint.tsx",
-        "frontend/src/i18n/translations.ts"
+        "frontend/src/audio/wavExport.ts"
       ],
       "components": [
         "authorization@4.0.0",
@@ -38,7 +36,7 @@
         "github-export-icp-cli@1.0.0"
       ],
       "testIds": [
-        "REQ-23"
+        "REQ-2"
       ],
       "confidence": "high"
     }

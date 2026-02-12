@@ -1,66 +1,55 @@
 {
   "kind": "build_request",
-  "title": "Hide the PWA install/download button after the app is installed",
-  "priority": "normal",
+  "title": "Fix runtime error when pressing Play in Mastering Studio",
+  "priority": "high",
   "requirements": [
     {
-      "id": "REQ-22",
-      "text": "Update the existing PWA install/download entry point so it automatically hides once the app is installed (and stays hidden on subsequent visits when already installed).",
+      "id": "REQ-1",
+      "text": "Fix the Play runtime error in Mastering Studio by making the audio playback chain compatible with both mono and stereo source files (e.g., do not create/use a 2-channel stereo-width splitter/merger path when the loaded audio buffer has 1 channel).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-9"
         ],
         "quotes": [
-          "Adicione um botao de baixar o app que some depois de baixar"
+          "Meu App esta dando erro de execução de play, resolva esse erro"
         ]
       },
       "acceptanceCriteria": [
-        "When the PWA is already installed (e.g., the app is running in standalone display-mode), the install/download button is not rendered anywhere it normally appears.",
-        "When the user successfully completes installation (browser fires the appinstalled event), the install/download button disappears immediately without requiring a page refresh.",
-        "If the user dismisses the install prompt or installation is not available, the install/download entry point remains visible and usable (no premature hiding).",
-        "The hidden/visible state is correct after a full reload (no flicker of the button when already installed)."
+        "With a mono (1-channel) audio file loaded, pressing Play in any available mode (Original and Mastered; Reference if provided) does not throw a runtime exception and audio plays as expected.",
+        "With a stereo (2-channel) audio file loaded, pressing Play continues to work and stereo-width processing (when enabled by preset) still functions without runtime errors.",
+        "If a mono file is loaded and stereo-width processing is not applicable, the app safely bypasses stereo-width nodes rather than crashing."
       ]
     },
     {
-      "id": "REQ-23",
-      "text": "Add/extend i18n strings for the install/download entry point (label + any short helper text it uses) so the new/updated UI text is localized for both Portuguese (pt-BR) and English (en). Use English copy for the en locale (e.g., \"Install app\").",
+      "id": "REQ-2",
+      "text": "Fix WAV export rendering so it does not throw runtime errors for mono source files by making the offline mastering chain compatible with the source buffer channel count (avoid forcing a 2-channel splitter/merger when rendering 1-channel audio).",
       "target": "frontend",
       "source": {
         "messageIds": [
-          "msg-1"
+          "msg-9"
         ],
         "quotes": [
-          "Adicione um botao de baixar o app que some depois de baixar"
+          "Meu App esta dando erro de execução de play, resolva esse erro"
         ]
       },
       "acceptanceCriteria": [
-        "All user-visible text introduced or changed for the install/download entry point is sourced from the i18n dictionary (not hard-coded).",
-        "Both 'pt-BR' and 'en' locales have translations for the install/download entry point strings.",
-        "In the en locale, the primary action label is in English (e.g., \"Install app\")."
+        "Exporting a mastered WAV from a mono source file completes successfully and downloads a valid WAV file.",
+        "Exporting a mastered WAV from a stereo source file continues to work as before.",
+        "No console runtime errors occur during export for either mono or stereo files."
       ]
     }
   ],
   "constraints": [
-    "Do not edit files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or anything in frontend/src/components/ui; compose existing UI components instead.",
-    "Frontend changes must remain compatible with the existing PWA support and existing install/download entry point feature (do not remove install capability)."
+    "Do not edit files under frontend/src/components/ui (Shadcn UI components are read-only).",
+    "Keep all backend logic in the single Motoko actor (no backend changes are required for this fix unless strictly necessary)."
   ],
   "nonGoals": [
-    "Adding new backend endpoints or storing installation state in the backend.",
-    "Changing the mastering/audio processing behavior."
+    "Adding new mastering features or new presets.",
+    "Changing authentication, project CRUD, or PWA behavior."
   ],
   "imageRequirements": {
     "required": [],
     "edits": []
-  },
-  "userProfileUpdate": {
-    "goalsToAdd": [],
-    "goalsToRemove": [],
-    "preferencesToAdd": [],
-    "preferencesToRemove": [],
-    "miscToAdd": [],
-    "miscToRemove": [],
-    "fieldsToSet": {},
-    "fieldsToDelete": []
   }
 }

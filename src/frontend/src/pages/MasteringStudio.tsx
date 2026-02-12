@@ -78,6 +78,11 @@ export default function MasteringStudio() {
       engineRef.current = new MasteringEngine();
       await engineRef.current.loadAudio(file);
       
+      // Apply current preset if one is selected
+      if (selectedPreset) {
+        await engineRef.current.applyPreset(MASTERING_PRESETS[selectedPreset]);
+      }
+      
       toast.success(t.studio.toasts.audioLoaded);
     } catch (err) {
       const message = err instanceof Error ? err.message : t.studio.toasts.audioLoadError;
@@ -170,6 +175,7 @@ export default function MasteringStudio() {
     } catch (err) {
       const message = err instanceof Error ? err.message : t.studio.toasts.playbackError;
       toast.error(message);
+      setIsPlaying(false);
     }
   };
 
@@ -478,7 +484,7 @@ export default function MasteringStudio() {
                   {isExporting ? (
                     <>
                       <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                      {t.studio.export.exporting} {Math.round(exportProgress * 100)}%
+                      {t.studio.export.exporting} {Math.round(exportProgress)}%
                     </>
                   ) : (
                     <>
@@ -491,8 +497,8 @@ export default function MasteringStudio() {
             )}
           </div>
 
-          {/* Projects Sidebar */}
-          <div className="w-80 hidden lg:block">
+          {/* Projects Panel */}
+          <div className="w-80">
             <ProjectsPanel />
           </div>
         </div>
