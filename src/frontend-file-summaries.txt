@@ -1,0 +1,22 @@
+{
+  "frontend/src/index.css": "Global styles with warm amber/orange OKLCH color palette for mastering theme, custom waveform gradient and glass effect utilities.",
+  "frontend/tailwind.config.js": "Tailwind configuration with Inter font family, extended color tokens, custom shadows including glow effect, and pulse-glow animation.",
+  "frontend/src/App.tsx": "Main application component wrapped with I18nProvider, featuring localized header with tagline and Studio button, language switcher in header, and localized footer with heart icon.",
+  "frontend/src/pages/Landing.tsx": "Landing page with fully localized hero section, 4-step workflow, help/FAQ, and CTA sections using i18n translations.",
+  "frontend/src/pages/MasteringStudio.tsx": "Mastering studio interface with complete i18n support for all UI labels, toast messages, preset selection (localized names/descriptions), reference mode, playback controls, and export functionality.",
+  "frontend/src/components/HelpFAQ.tsx": "Help and FAQ component rendering localized questions and answers from i18n translations.",
+  "frontend/src/components/auth/LoginButton.tsx": "Authentication button with localized labels for login, logout, and loading states using i18n translations.",
+  "frontend/src/components/auth/ProfileSetupModal.tsx": "Profile setup modal with localized title, description, form labels, and button states using i18n translations.",
+  "frontend/src/components/projects/ProjectsPanel.tsx": "Projects panel with localized UI strings, locale-aware date formatting (pt-BR vs en-US), and preset display names mapped from stored preset keys to localized translations.",
+  "frontend/src/hooks/useProjects.ts": "React Query hooks for project management storing preset keys (not localized names) to maintain backwards compatibility and stable canonical values.",
+  "frontend/src/hooks/useUserProfile.ts": "React Query hooks for fetching and saving user profiles with proper loading state management to prevent modal flash.",
+  "frontend/src/audio/metadata.ts": "Audio file validation (WAV/MP3, 50MB limit) and metadata extraction (duration, sample rate, channels) using Web Audio API.",
+  "frontend/src/audio/presets.ts": "Mastering preset definitions with stable English name/description properties (kept for backwards compatibility) while UI displays localized versions from i18n/presets.ts.",
+  "frontend/src/audio/engine.ts": "Web Audio mastering engine with expanded processing chain including saturation (WaveShaper) and stereo width (M/S processing) stages; supports reference track loading, A/B/Reference switching, and RMS-based loudness matching with clean playback transitions using inline curve generation to avoid type issues.",
+  "frontend/src/audio/wavExport.ts": "Offline audio rendering for WAV export with complete mastering chain including saturation and stereo width processing; mirrors the real-time engine processing for consistent export quality with inline curve generation to avoid Float32Array type conflicts.",
+  "frontend/src/i18n/translations.ts": "Complete i18n translation dictionaries for Portuguese (pt-BR) and English (en) covering all user-facing strings across the entire application including header, auth, landing, studio, projects, help/FAQ, and footer sections.",
+  "frontend/src/i18n/presets.ts": "Localized preset name and description mappings for all seven mastering presets (clean, warm, loud, bass, bright, vintage, modern) in both Portuguese and English.",
+  "frontend/src/i18n/I18nProvider.tsx": "React context provider that manages language state (pt-BR default), persists language selection to localStorage, and provides translation access via useI18nContext hook.",
+  "frontend/src/i18n/useI18n.ts": "Simple hook wrapper that exposes the i18n context (language, locale, setLanguage, and t translator) for use across all components.",
+  "frontend/src/components/i18n/LanguageSwitcher.tsx": "Dropdown menu component with language toggle between Portuguese and English, using Languages icon and highlighting the active language."
+}

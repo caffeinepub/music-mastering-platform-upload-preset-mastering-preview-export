@@ -1,0 +1,103 @@
+{
+  "kind": "build_request",
+  "title": "Add Portuguese (default) + English language switcher (i18n) across the app",
+  "priority": "normal",
+  "requirements": [
+    {
+      "id": "REQ-14",
+      "text": "Add an app-wide internationalization (i18n) system with Portuguese (pt-BR) as the default language and an option to switch to English (en) at runtime.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Com opção de trocar de idioma"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Portuguese (pt-BR) is the default language on first load.",
+        "A user can switch between Portuguese and English without reloading the page.",
+        "The selected language persists across page refreshes (e.g., via local storage or a persisted URL parameter).",
+        "The language state is accessible across all pages/components (single source of truth via a provider/hook)."
+      ]
+    },
+    {
+      "id": "REQ-15",
+      "text": "Add a visible language switch control in the app header that allows toggling between Portuguese and English.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Com opção de trocar de idioma"
+        ]
+      },
+      "acceptanceCriteria": [
+        "A language toggle is available from the global header on both the Landing page and the Studio page.",
+        "The control clearly indicates the current language (e.g., “PT” / “EN” or “Português” / “English”).",
+        "Switching language updates the header text (e.g., tagline, “Studio”, auth button labels) immediately."
+      ]
+    },
+    {
+      "id": "REQ-16",
+      "text": "Translate all user-facing UI strings across the app to support both Portuguese (pt-BR) and English (en), including: Landing page, Mastering Studio page (all labels/help text), Help/FAQ content, authentication UI, profile setup modal, project list panel, toast/error messages, and any empty/error states.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Com opção de trocar de idioma"
+        ]
+      },
+      "acceptanceCriteria": [
+        "No hard-coded English-only strings remain in the main user flows (Landing, Studio, Help/FAQ, Projects, Auth/Profile modal).",
+        "Toast messages shown during upload, preset apply, playback errors, reference loading, exporting, and project deletion are localized in both languages.",
+        "Date/time formatting in the projects list uses the active locale (pt-BR vs en-US behavior)."
+      ]
+    },
+    {
+      "id": "REQ-17",
+      "text": "Ensure preset display strings (preset name and description) are localized for both Portuguese and English, while keeping existing preset keys/behavior unchanged.",
+      "target": "frontend",
+      "source": {
+        "messageIds": [
+          "msg-1"
+        ],
+        "quotes": [
+          "Com opção de trocar de idioma"
+        ]
+      },
+      "acceptanceCriteria": [
+        "Preset selection UI displays localized preset name/description in the active language.",
+        "Preset keys used by the audio engine and project creation remain stable (no breaking changes to preset identifiers).",
+        "When creating/saving a project, the stored preset label is consistent and user-friendly (localized or a stable canonical label), and does not break existing project rendering."
+      ]
+    }
+  ],
+  "constraints": [
+    "Do not edit files under frontend/src/hooks/useInternetIdentity.ts, frontend/src/hooks/useInternetIdentity.tsx, frontend/src/hooks/useActor.ts, frontend/src/main.tsx, or anything in frontend/src/components/ui; compose around them.",
+    "Keep the backend single-actor architecture unchanged; this change should be frontend-only unless a backend change is strictly required for language persistence."
+  ],
+  "nonGoals": [
+    "Adding additional languages beyond Portuguese (pt-BR) and English (en).",
+    "Implementing third-party i18n SaaS integrations or server-side translation services.",
+    "Changing audio processing behavior, presets’ processing parameters, or mastering engine logic."
+  ],
+  "imageRequirements": {
+    "required": [],
+    "edits": []
+  },
+  "userProfileUpdate": {
+    "goalsToAdd": [],
+    "goalsToRemove": [],
+    "preferencesToAdd": [],
+    "preferencesToRemove": [],
+    "miscToAdd": [],
+    "miscToRemove": [],
+    "fieldsToSet": {},
+    "fieldsToDelete": []
+  }
+}

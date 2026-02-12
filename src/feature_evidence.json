@@ -1,0 +1,93 @@
+{
+  "kind": "feature_evidence_report",
+  "features": [
+    {
+      "featureId": "feature-add-an-app-wide-internationalization-i18n-system-with-portuguese-pt-br-as-the-default-language-and-an-option-to-switch-to-english-en-at-runtime",
+      "featureTitle": "Add an app-wide internationalization (i18n) system with Portuguese (pt-BR) as the default language and an option to switch to English (en) at runtime.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/i18n/I18nProvider.tsx",
+        "frontend/src/i18n/translations.ts",
+        "frontend/src/i18n/useI18n.ts"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-14"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-add-a-visible-language-switch-control-in-the-app-header-that-allows-toggling-between-portuguese-and-english",
+      "featureTitle": "Add a visible language switch control in the app header that allows toggling between Portuguese and English.",
+      "files": [
+        "frontend/src/App.tsx",
+        "frontend/src/components/auth/LoginButton.tsx",
+        "frontend/src/components/i18n/LanguageSwitcher.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-15"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-translate-all-user-facing-ui-strings-across-the-app-to-support-both-portuguese-pt-br-and-english-en-including-landing-page-mastering-studio-page-all-labels-help-text-help-faq-content-authentication-ui-profile-setup-modal-project-list-panel-toast-error-messages-and-any-empty-error-states",
+      "featureTitle": "Translate all user-facing UI strings across the app to support both Portuguese (pt-BR) and English (en), including: Landing page, Mastering Studio page (all labels/help text), Help/FAQ content, authentication UI, profile setup modal, project list panel, toast/error messages, and any empty/error states.",
+      "files": [
+        "frontend/src/components/HelpFAQ.tsx",
+        "frontend/src/components/auth/ProfileSetupModal.tsx",
+        "frontend/src/components/projects/ProjectsPanel.tsx",
+        "frontend/src/pages/Landing.tsx",
+        "frontend/src/pages/MasteringStudio.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-16"
+      ],
+      "confidence": "high"
+    },
+    {
+      "featureId": "feature-ensure-preset-display-strings-preset-name-and-description-are-localized-for-both-portuguese-and-english-while-keeping-existing-preset-keys-behavior-unchanged",
+      "featureTitle": "Ensure preset display strings (preset name and description) are localized for both Portuguese and English, while keeping existing preset keys/behavior unchanged.",
+      "files": [
+        "frontend/src/components/projects/ProjectsPanel.tsx",
+        "frontend/src/hooks/useProjects.ts",
+        "frontend/src/i18n/presets.ts",
+        "frontend/src/pages/MasteringStudio.tsx"
+      ],
+      "components": [
+        "authorization@4.0.0",
+        "core-infrastructure@1.0.2",
+        "shadcn-ui@1.0.0",
+        "build-template-react@1.0.0",
+        "initial-app@1.0.0",
+        "github-export-icp-cli@1.0.0"
+      ],
+      "testIds": [
+        "REQ-17"
+      ],
+      "confidence": "high"
+    }
+  ]
+}

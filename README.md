@@ -1,2 +1,3 @@
-# music-mastering-platform-upload-preset-mastering-preview-export
-Exported from Caffeine project: Music mastering platform (upload, preset mastering, preview, export)
+## 
+
+To run app build and run docker image: `docker build -t app . docker run -it --network host app`
