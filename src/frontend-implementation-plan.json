@@ -1,42 +1,45 @@
 {
   "kind": "implementation_plan",
   "version": "1.0",
-  "title": "Mastering Studio mono/stereo-safe playback and WAV export",
+  "title": "Promote App Draft Version 9 to Production (Frontend-only plan)",
   "requirements": [
     {
       "id": "REQ-1",
-      "summary": "Make the realtime Web Audio playback chain mono/stereo compatible by conditionally bypassing stereo-width routing for mono buffers.",
+      "summary": "Promote App draft Version 9 to production by deploying the frontend bundle (frontend-side release guidance only in this plan).",
       "acceptanceCriteria": [
-        "With a mono (1-channel) audio file loaded, pressing Play in any available mode (Original and Mastered; Reference if provided) does not throw a runtime exception and audio plays as expected.",
-        "With a stereo (2-channel) audio file loaded, pressing Play continues to work and stereo-width processing (when enabled by preset) still functions without runtime errors.",
-        "If a mono file is loaded and stereo-width processing is not applicable, the app safely bypasses stereo-width nodes rather than crashing."
+        "Production environment is updated to App draft Version 9 for both frontend and backend canisters.",
+        "No deployment errors occur; deployment completes successfully.",
+        "The production URL serves the updated frontend bundle."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/audio/engine.ts",
-          "operation": "modify",
-          "description": "Refactor the mastered playback routing so stereo-width (ChannelSplitter/ChannelMerger M/S path) is only connected when the loaded source buffer has 2 channels and the current preset enables stereo width; otherwise, route limiter directly to output gain to safely bypass stereo-width nodes for mono sources. Ensure connections are reconfigured safely (disconnect/reconnect) when preset changes or new audio is loaded so Play never throws due to invalid channel indexing."
-        },
-        {
-          "path": "frontend/src/pages/MasteringStudio.tsx",
-          "operation": "modify",
-          "description": "Add lightweight defensive handling around playback start to ensure the engine’s current routing reflects the loaded buffer’s channel count before starting mastered playback (e.g., trigger a re-apply of the selected preset or a routing refresh after load) so mono/stereo switching cannot leave the engine in an incompatible state."
+          "path": "frontend/DEPLOYMENT_PRODUCTION.md",
+          "operation": "create",
+          "description": "Add an English, frontend-focused production deployment runbook for promoting the approved draft to production (build, verify generated assets, and release checklist). Ensure it notes that backend deployment is required but out of scope for this frontend-only plan. Also include a reminder not to modify frontend immutable paths. (No component usage.)"
         }
       ]
     },
     {
       "id": "REQ-2",
-      "summary": "Make offline WAV export rendering mono/stereo compatible by building an offline mastering chain that only uses stereo-width splitter/merger when the source buffer is stereo.",
+      "summary": "Run a post-deploy production smoke test for core user flows (landing, Internet Identity auth, studio navigation, upload, preset, export WAV, projects list update).",
       "acceptanceCriteria": [
-        "Exporting a mastered WAV from a mono source file completes successfully and downloads a valid WAV file.",
-        "Exporting a mastered WAV from a stereo source file continues to work as before.",
-        "No console runtime errors occur during export for either mono or stereo files."
+        "Landing page loads without console errors.",
+        "Internet Identity login/logout succeeds.",
+        "Authenticated user can reach /studio route and the UI renders.",
+        "Audio upload + preset application completes without runtime errors.",
+        "WAV export completes and downloads.",
+        "Projects panel loads and reflects newly created project entries (if applicable)."
       ],
       "file_operations": [
         {
-          "path": "frontend/src/audio/wavExport.ts",
+          "path": "frontend/PRODUCTION_SMOKE_TEST.md",
+          "operation": "create",
+          "description": "Create an English step-by-step smoke test checklist aligned to the acceptance criteria, referencing the existing UI routes/pages (/, /studio) and the existing flows (LoginButton + Internet Identity, MasteringStudio upload/preset/export, ProjectsPanel list refresh). Include expected results, what to capture on failure (console logs/network errors), and a short rollback/escalation note. (No component usage.)"
+        },
+        {
+          "path": "frontend/src/pages/MasteringStudio.tsx",
           "operation": "modify",
-          "description": "Update the offline mastering chain construction to be channel-count aware: when rendering mono (1-channel), bypass stereo-width processing entirely by connecting limiter directly to output gain (and then destination), and only create/connect the 2-channel splitter/merger stereo-width path when the source buffer has 2 channels and the preset enables stereo width."
+          "description": "Add non-invasive, production-safe console error guards (e.g., ensure async errors in upload/preset/export paths are surfaced via existing toast/error handling rather than unhandled promise rejections) to improve smoke-test reliability without changing audio processing logic or UI design. Keep all user-facing text in English and reuse existing i18n/toast strings. (No component usage.)"
         }
       ]
     }

@@ -1,7 +1,7 @@
 {
   "kind": "coverage_report",
   "version": "1.0",
-  "generatedAt": "2026-02-12T19:34:44.633Z",
+  "generatedAt": "2026-02-13T07:30:51.025Z",
   "sources": {
     "buildRequest": true,
     "implementationPlan": true
@@ -12,37 +12,46 @@
     "items": [
       {
         "id": "REQ-1",
-        "summary": "Fix the Play runtime error in Mastering Studio by making the audio playback chain compatible with both mono and stereo source files (e.g., do not create/use a 2-channel stereo-width splitter/merger path when the loaded audio buffer has 1 channel).",
+        "summary": "Promote the current approved draft (App draft Version 9) to production by deploying both the frontend and the backend canister(s) to the production environment.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/audio/engine.ts",
-          "frontend/src/pages/MasteringStudio.tsx"
+          "frontend/DEPLOYMENT_PRODUCTION.md"
         ],
         "matchedFiles": [
-          "frontend/src/audio/engine.ts",
-          "frontend/src/pages/MasteringStudio.tsx"
+          "frontend/DEPLOYMENT_PRODUCTION.md"
         ]
       },
       {
         "id": "REQ-2",
-        "summary": "Fix WAV export rendering so it does not throw runtime errors for mono source files by making the offline mastering chain compatible with the source buffer channel count (avoid forcing a 2-channel splitter/merger when rendering 1-channel audio).",
+        "summary": "Run a production smoke test after deployment to verify core flows: load landing page, authenticate with Internet Identity, navigate to Mastering Studio, upload an audio file, apply a preset, export WAV, and verify projects list loads/updates.",
         "status": "implemented",
         "plannedFiles": [
-          "frontend/src/audio/wavExport.ts"
+          "frontend/PRODUCTION_SMOKE_TEST.md",
+          "frontend/src/pages/MasteringStudio.tsx"
         ],
         "matchedFiles": [
-          "frontend/src/audio/wavExport.ts"
+          "frontend/PRODUCTION_SMOKE_TEST.md",
+          "frontend/src/pages/MasteringStudio.tsx"
         ]
       }
     ]
   },
   "changedFiles": [
+    "backend/blob-storage/Mixin.mo",
+    "backend/blob-storage/Storage.mo",
+    "backend/main.mo",
+    "backend/migration.mo",
     "build-request.json",
+    "caffeine.lock.json",
     "feature_evidence.json",
     "frontend-file-summaries.txt",
     "frontend-implementation-plan.json",
-    "frontend/src/audio/engine.ts",
-    "frontend/src/audio/wavExport.ts",
+    "frontend/DEPLOYMENT_PRODUCTION.md",
+    "frontend/PRODUCTION_SMOKE_TEST.md",
+    "frontend/src/backend.d.ts",
+    "frontend/src/backend.ts",
+    "frontend/src/declarations/backend.did.d.ts",
+    "frontend/src/declarations/backend.did.js",
     "frontend/src/pages/MasteringStudio.tsx",
     "project_state.json",
     "scratch/component-selection.json",

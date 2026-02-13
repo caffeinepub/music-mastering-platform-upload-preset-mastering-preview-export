@@ -31,7 +31,12 @@ export class MasteringEngine {
   private currentMode: 'original' | 'mastered' | 'reference' = 'original';
   private currentPreset: MasteringPreset | null = null;
   private loudnessMatchingEnabled: boolean = false;
+  
+  // Connection state tracking
   private isStereoWidthConnected: boolean = false;
+  private isOriginalConnectedToDestination: boolean = false;
+  private isOutputConnectedToDestination: boolean = false;
+  private isReferenceConnectedToDestination: boolean = false;
 
   constructor() {
     this.audioContext = new AudioContext();
@@ -121,10 +126,10 @@ export class MasteringEngine {
     this.stereoWidthSideGain.gain.value = side;
   }
 
-  private configureMasteredChainRouting(): void {
-    // Disconnect existing connections from limiter
+  private disconnectStereoWidthChain(): void {
+    if (!this.isStereoWidthConnected) return;
+    
     try {
-      this.limiter.disconnect();
       this.stereoWidthSplitter.disconnect();
       this.stereoWidthGainL.disconnect();
       this.stereoWidthGainR.disconnect();
@@ -132,14 +137,27 @@ export class MasteringEngine {
       this.stereoWidthSideGain.disconnect();
       this.stereoWidthMerger.disconnect();
     } catch (e) {
-      // Nodes may not be connected yet
+      // Nodes may not be connected
     }
+    
+    this.isStereoWidthConnected = false;
+  }
+
+  private configureMasteredChainRouting(): void {
+    // Disconnect existing connections from limiter and stereo width chain
+    try {
+      this.limiter.disconnect();
+    } catch (e) {
+      // Node may not be connected yet
+    }
+    
+    this.disconnectStereoWidthChain();
 
     const isStereo = this.sourceBuffer && this.sourceBuffer.numberOfChannels === 2;
     const useStereoWidth = isStereo && this.currentPreset?.stereoWidth?.enabled;
 
     if (useStereoWidth) {
-      // Connect stereo width processing
+      // Connect stereo width processing (only for stereo sources)
       this.limiter.connect(this.stereoWidthSplitter);
       
       this.stereoWidthSplitter.connect(this.stereoWidthGainL, 0);
@@ -332,14 +350,17 @@ export class MasteringEngine {
       this.sourceNode.buffer = this.sourceBuffer;
       this.sourceNode.connect(this.originalGainNode);
       this.originalGainNode.connect(this.audioContext.destination);
+      this.isOriginalConnectedToDestination = true;
     } else if (mode === 'mastered') {
       this.sourceNode.buffer = this.sourceBuffer;
       this.sourceNode.connect(this.lowShelfFilter);
       this.outputGainNode.connect(this.audioContext.destination);
+      this.isOutputConnectedToDestination = true;
     } else if (mode === 'reference') {
       this.sourceNode.buffer = this.referenceBuffer;
       this.sourceNode.connect(this.referenceGainNode);
       this.referenceLoudnessGain.connect(this.audioContext.destination);
+      this.isReferenceConnectedToDestination = true;
     }
     
     this.currentMode = mode;
@@ -357,10 +378,33 @@ export class MasteringEngine {
       this.sourceNode = null;
     }
     
-    // Disconnect all nodes from destination
-    this.originalGainNode.disconnect();
-    this.outputGainNode.disconnect();
-    this.referenceLoudnessGain.disconnect();
+    // Disconnect nodes from destination only if they were connected
+    if (this.isOriginalConnectedToDestination) {
+      try {
+        this.originalGainNode.disconnect(this.audioContext.destination);
+      } catch (e) {
+        // May not be connected
+      }
+      this.isOriginalConnectedToDestination = false;
+    }
+    
+    if (this.isOutputConnectedToDestination) {
+      try {
+        this.outputGainNode.disconnect(this.audioContext.destination);
+      } catch (e) {
+        // May not be connected
+      }
+      this.isOutputConnectedToDestination = false;
+    }
+    
+    if (this.isReferenceConnectedToDestination) {
+      try {
+        this.referenceLoudnessGain.disconnect(this.audioContext.destination);
+      } catch (e) {
+        // May not be connected
+      }
+      this.isReferenceConnectedToDestination = false;
+    }
   }
 
   getAudioBuffer(): AudioBuffer | null {

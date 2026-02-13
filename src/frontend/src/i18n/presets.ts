@@ -35,6 +35,10 @@ export const presetTranslations: Record<Language, Record<string, PresetTranslati
       name: 'Moderno',
       description: 'Som contemporâneo com estéreo amplo e impacto',
     },
+    voiceClean: {
+      name: 'Limpeza de Voz',
+      description: 'Otimizado para clareza e inteligibilidade vocal',
+    },
   },
   'en': {
     clean: {
@@ -64,6 +68,10 @@ export const presetTranslations: Record<Language, Record<string, PresetTranslati
     modern: {
       name: 'Modern',
       description: 'Contemporary sound with wide stereo and punch',
+    },
+    voiceClean: {
+      name: 'Voice Clean',
+      description: 'Optimized for vocal clarity and intelligibility',
     },
   },
 };

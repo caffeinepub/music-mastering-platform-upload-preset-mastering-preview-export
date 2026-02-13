@@ -1,52 +1,59 @@
 {
   "kind": "build_request",
-  "title": "Fix runtime error when pressing Play in Mastering Studio",
-  "priority": "high",
+  "title": "Promote App Draft Version 9 to Production",
+  "priority": "normal",
   "requirements": [
     {
       "id": "REQ-1",
-      "text": "Fix the Play runtime error in Mastering Studio by making the audio playback chain compatible with both mono and stereo source files (e.g., do not create/use a 2-channel stereo-width splitter/merger path when the loaded audio buffer has 1 channel).",
-      "target": "frontend",
+      "text": "Promote the current approved draft (App draft Version 9) to production by deploying both the frontend and the backend canister(s) to the production environment.",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-9"
+          "msg-1",
+          "msg-2",
+          "msg-3"
         ],
         "quotes": [
-          "Meu App esta dando erro de execução de play, resolva esse erro"
+          "🎬 App draft Version 9 is ready for review",
+          "Want me to push this version to production next?",
+          "Sim"
         ]
       },
       "acceptanceCriteria": [
-        "With a mono (1-channel) audio file loaded, pressing Play in any available mode (Original and Mastered; Reference if provided) does not throw a runtime exception and audio plays as expected.",
-        "With a stereo (2-channel) audio file loaded, pressing Play continues to work and stereo-width processing (when enabled by preset) still functions without runtime errors.",
-        "If a mono file is loaded and stereo-width processing is not applicable, the app safely bypasses stereo-width nodes rather than crashing."
+        "Production environment is updated to App draft Version 9 for both frontend and backend canisters.",
+        "No deployment errors occur; deployment completes successfully.",
+        "The production URL serves the updated frontend bundle."
       ]
     },
     {
       "id": "REQ-2",
-      "text": "Fix WAV export rendering so it does not throw runtime errors for mono source files by making the offline mastering chain compatible with the source buffer channel count (avoid forcing a 2-channel splitter/merger when rendering 1-channel audio).",
-      "target": "frontend",
+      "text": "Run a production smoke test after deployment to verify core flows: load landing page, authenticate with Internet Identity, navigate to Mastering Studio, upload an audio file, apply a preset, export WAV, and verify projects list loads/updates.",
+      "target": "both",
       "source": {
         "messageIds": [
-          "msg-9"
+          "msg-4"
         ],
         "quotes": [
-          "Meu App esta dando erro de execução de play, resolva esse erro"
+          "Got it — starting the build now."
         ]
       },
       "acceptanceCriteria": [
-        "Exporting a mastered WAV from a mono source file completes successfully and downloads a valid WAV file.",
-        "Exporting a mastered WAV from a stereo source file continues to work as before.",
-        "No console runtime errors occur during export for either mono or stereo files."
+        "Landing page loads without console errors.",
+        "Internet Identity login/logout succeeds.",
+        "Authenticated user can reach /studio route and the UI renders.",
+        "Audio upload + preset application completes without runtime errors.",
+        "WAV export completes and downloads.",
+        "Projects panel loads and reflects newly created project entries (if applicable)."
       ]
     }
   ],
   "constraints": [
-    "Do not edit files under frontend/src/components/ui (Shadcn UI components are read-only).",
-    "Keep all backend logic in the single Motoko actor (no backend changes are required for this fix unless strictly necessary)."
+    "Use English for any user-facing text in this build request.",
+    "Do not modify files under the frontend immutable paths listed in SYSTEM_CONTEXT."
   ],
   "nonGoals": [
-    "Adding new mastering features or new presets.",
-    "Changing authentication, project CRUD, or PWA behavior."
+    "Implementing new audio presets beyond what is already included in App draft Version 9.",
+    "Changing UI design, translations, or audio processing logic as part of this production push."
   ],
   "imageRequirements": {
     "required": [],

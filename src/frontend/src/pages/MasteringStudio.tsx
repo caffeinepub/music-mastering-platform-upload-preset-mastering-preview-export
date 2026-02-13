@@ -9,6 +9,7 @@ import { validateAudioFile, extractMetadata, type AudioMetadata } from '../audio
 import { MasteringEngine } from '../audio/engine';
 import { MASTERING_PRESETS } from '../audio/presets';
 import { exportToWav } from '../audio/wavExport';
+import { getErrorMessage, logErrorDetails } from '../utils/audioErrors';
 import { useCreateProject, useGetAllProjects, useDeleteProject } from '../hooks/useProjects';
 import ProjectsPanel from '../components/projects/ProjectsPanel';
 import { Button } from '../components/ui/button';
@@ -85,9 +86,17 @@ export default function MasteringStudio() {
       
       toast.success(t.studio.toasts.audioLoaded);
     } catch (err) {
-      const message = err instanceof Error ? err.message : t.studio.toasts.audioLoadError;
+      const message = getErrorMessage(err);
+      logErrorDetails(err, 'Audio Load');
       setError(message);
       toast.error(message);
+      // Reset state on error to prevent inconsistent UI
+      setAudioFile(null);
+      setMetadata(null);
+      if (engineRef.current) {
+        engineRef.current.dispose();
+        engineRef.current = null;
+      }
     }
   };
 
@@ -114,8 +123,15 @@ export default function MasteringStudio() {
       
       toast.success(t.studio.toasts.referenceLoaded);
     } catch (err) {
-      const message = err instanceof Error ? err.message : t.studio.toasts.referenceLoadError;
+      const message = getErrorMessage(err);
+      logErrorDetails(err, 'Reference Load');
       toast.error(message);
+      // Reset reference state on error
+      setReferenceFile(null);
+      setReferenceMetadata(null);
+      if (engineRef.current) {
+        engineRef.current.clearReference();
+      }
     }
   };
 
@@ -155,8 +171,11 @@ export default function MasteringStudio() {
           });
         }
       } catch (err) {
-        const message = err instanceof Error ? err.message : t.studio.toasts.presetApplyError;
+        const message = getErrorMessage(err);
+        logErrorDetails(err, 'Preset Apply');
+        setError(message);
         toast.error(message);
+        // Don't reset preset selection on error - user can retry
       }
     }
   };
@@ -173,8 +192,11 @@ export default function MasteringStudio() {
         setIsPlaying(true);
       }
     } catch (err) {
-      const message = err instanceof Error ? err.message : t.studio.toasts.playbackError;
+      const message = getErrorMessage(err);
+      logErrorDetails(err, 'Playback Toggle');
+      setError(message);
       toast.error(message);
+      // Always reset to not playing on error
       setIsPlaying(false);
     }
   };
@@ -188,20 +210,27 @@ export default function MasteringStudio() {
     }
     
     const wasPlaying = isPlaying;
-    if (wasPlaying) {
-      engineRef.current.pause();
-    }
     
-    setPlaybackMode(mode);
-    
-    if (wasPlaying) {
-      try {
-        await engineRef.current.play(mode);
-      } catch (err) {
-        const message = err instanceof Error ? err.message : t.studio.toasts.playbackError;
-        toast.error(message);
+    try {
+      // Always pause first to ensure clean state
+      if (wasPlaying) {
+        engineRef.current.pause();
         setIsPlaying(false);
       }
+      
+      setPlaybackMode(mode);
+      
+      if (wasPlaying) {
+        await engineRef.current.play(mode);
+        setIsPlaying(true);
+      }
+    } catch (err) {
+      const message = getErrorMessage(err);
+      logErrorDetails(err, 'Mode Switch');
+      setError(message);
+      toast.error(message);
+      // Always reset to not playing on error
+      setIsPlaying(false);
     }
   };
 
@@ -229,8 +258,10 @@ export default function MasteringStudio() {
 
       toast.success(t.studio.toasts.exportSuccess);
     } catch (err) {
-      const message = err instanceof Error ? err.message : t.studio.toasts.exportError;
+      const message = getErrorMessage(err);
+      logErrorDetails(err, 'WAV Export');
       toast.error(message);
+      setError(message);
     } finally {
       setIsExporting(false);
       setExportProgress(0);
@@ -484,7 +515,7 @@ export default function MasteringStudio() {
                   {isExporting ? (
                     <>
                       <Loader2 className="h-5 w-5 mr-2 animate-spin" />
-                      {t.studio.export.exporting} {Math.round(exportProgress)}%
+                      {t.studio.export.exporting} {exportProgress}%
                     </>
                   ) : (
                     <>
@@ -498,9 +529,7 @@ export default function MasteringStudio() {
           </div>
 
           {/* Projects Panel */}
-          <div className="w-80">
-            <ProjectsPanel />
-          </div>
+          <ProjectsPanel />
         </div>
       </div>
     </div>

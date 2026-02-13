@@ -4,12 +4,17 @@ import Array "mo:core/Array";
 import Map "mo:core/Map";
 import Principal "mo:core/Principal";
 import Runtime "mo:core/Runtime";
+import Storage "blob-storage/Storage";
 import MixinAuthorization "authorization/MixinAuthorization";
+import MixinStorage "blob-storage/Mixin";
 import AccessControl "authorization/access-control";
+import Migration "migration";
 
+(with migration = Migration.run)
 actor {
   let accessControlState = AccessControl.initState();
   include MixinAuthorization(accessControlState);
+  include MixinStorage();
 
   public type ProjectStatus = {
     #pending;
@@ -25,6 +30,8 @@ actor {
     preset : Text;
     status : ProjectStatus;
     owner : Principal;
+    trackBlob : ?Storage.ExternalBlob;
+    finalMasterBlob : ?Storage.ExternalBlob;
   };
 
   public type UserProfile = {
@@ -69,6 +76,8 @@ actor {
       preset;
       status = #pending;
       owner = caller;
+      trackBlob = null;
+      finalMasterBlob = null;
     };
     projects.add(id, project);
     id;
@@ -88,6 +97,46 @@ actor {
         };
         let updatedProject : MasteringProject = {
           project with status;
+        };
+        projects.add(id, updatedProject);
+      };
+    };
+  };
+
+  public shared ({ caller }) func uploadTrack(id : Text, blob : Storage.ExternalBlob) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can upload tracks");
+    };
+
+    switch (projects.get(id)) {
+      case (null) { Runtime.trap("Project not found") };
+      case (?project) {
+        // Only owner or admin can upload
+        if (project.owner != caller and not AccessControl.isAdmin(accessControlState, caller)) {
+          Runtime.trap("Unauthorized: Only the project owner or admin can upload tracks to this project");
+        };
+        let updatedProject = {
+          project with trackBlob = ?blob;
+        };
+        projects.add(id, updatedProject);
+      };
+    };
+  };
+
+  public shared ({ caller }) func uploadFinalMaster(id : Text, blob : Storage.ExternalBlob) : async () {
+    if (not (AccessControl.hasPermission(accessControlState, caller, #user))) {
+      Runtime.trap("Unauthorized: Only users can upload final masters");
+    };
+
+    switch (projects.get(id)) {
+      case (null) { Runtime.trap("Project not found") };
+      case (?project) {
+        // Only owner or admin can upload
+        if (project.owner != caller and not AccessControl.isAdmin(accessControlState, caller)) {
+          Runtime.trap("Unauthorized: Only the project owner or admin can upload final masters to this project");
+        };
+        let updatedProject = {
+          project with finalMasterBlob = ?blob;
         };
         projects.add(id, updatedProject);
       };

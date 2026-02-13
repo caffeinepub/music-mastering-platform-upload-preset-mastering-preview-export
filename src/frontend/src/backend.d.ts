@@ -7,13 +7,22 @@ export interface None {
     __kind__: "None";
 }
 export type Option<T> = Some<T> | None;
+export class ExternalBlob {
+    getBytes(): Promise<Uint8Array<ArrayBuffer>>;
+    getDirectURL(): string;
+    static fromURL(url: string): ExternalBlob;
+    static fromBytes(blob: Uint8Array<ArrayBuffer>): ExternalBlob;
+    withUploadProgress(onProgress: (percentage: number) => void): ExternalBlob;
+}
 export interface MasteringProject {
     id: string;
     status: ProjectStatus;
+    trackBlob?: ExternalBlob;
     trackName: string;
     owner: Principal;
     createdAt: bigint;
     preset: string;
+    finalMasterBlob?: ExternalBlob;
 }
 export interface UserProfile {
     name: string;
@@ -41,4 +50,6 @@ export interface backendInterface {
     isCallerAdmin(): Promise<boolean>;
     saveCallerUserProfile(profile: UserProfile): Promise<void>;
     updateProjectStatus(id: string, status: ProjectStatus): Promise<void>;
+    uploadFinalMaster(id: string, blob: ExternalBlob): Promise<void>;
+    uploadTrack(id: string, blob: ExternalBlob): Promise<void>;
 }

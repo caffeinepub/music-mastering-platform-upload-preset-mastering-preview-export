@@ -97,7 +97,7 @@ export async function exportToWav(
   compressor.connect(limiter);
 
   if (useStereoWidth && preset.stereoWidth) {
-    // Stereo width processing for stereo files
+    // Stereo width processing for stereo files only
     const stereoSplitter = offlineContext.createChannelSplitter(2);
     const stereoMerger = offlineContext.createChannelMerger(2);
     const stereoGainL = offlineContext.createGain();
@@ -164,39 +164,31 @@ function audioBufferToWav(buffer: AudioBuffer): Blob {
 
   const data = interleave(buffer);
   const dataLength = data.length * bytesPerSample;
-  const headerLength = 44;
-  const totalLength = headerLength + dataLength;
 
-  const arrayBuffer = new ArrayBuffer(totalLength);
+  const arrayBuffer = new ArrayBuffer(44 + dataLength);
   const view = new DataView(arrayBuffer);
 
   // RIFF chunk descriptor
   writeString(view, 0, 'RIFF');
-  view.setUint32(4, totalLength - 8, true);
+  view.setUint32(4, 36 + dataLength, true);
   writeString(view, 8, 'WAVE');
 
-  // fmt sub-chunk
+  // FMT sub-chunk
   writeString(view, 12, 'fmt ');
-  view.setUint32(16, 16, true); // fmt chunk size
-  view.setUint16(20, format, true);
+  view.setUint32(16, 16, true); // Subchunk1Size (16 for PCM)
+  view.setUint16(20, format, true); // AudioFormat (1 for PCM)
   view.setUint16(22, numberOfChannels, true);
   view.setUint32(24, sampleRate, true);
-  view.setUint32(28, sampleRate * blockAlign, true); // byte rate
+  view.setUint32(28, sampleRate * blockAlign, true); // ByteRate
   view.setUint16(32, blockAlign, true);
   view.setUint16(34, bitDepth, true);
 
-  // data sub-chunk
+  // Data sub-chunk
   writeString(view, 36, 'data');
   view.setUint32(40, dataLength, true);
 
-  // Write audio data
-  let offset = 44;
-  for (let i = 0; i < data.length; i++) {
-    const sample = Math.max(-1, Math.min(1, data[i]));
-    const intSample = sample < 0 ? sample * 0x8000 : sample * 0x7fff;
-    view.setInt16(offset, intSample, true);
-    offset += 2;
-  }
+  // Write PCM samples
+  floatTo16BitPCM(view, 44, data);
 
   return new Blob([arrayBuffer], { type: 'audio/wav' });
 }
@@ -219,5 +211,12 @@ function interleave(buffer: AudioBuffer): Float32Array {
 function writeString(view: DataView, offset: number, string: string): void {
   for (let i = 0; i < string.length; i++) {
     view.setUint8(offset + i, string.charCodeAt(i));
+  }
+}
+
+function floatTo16BitPCM(view: DataView, offset: number, input: Float32Array): void {
+  for (let i = 0; i < input.length; i++, offset += 2) {
+    const s = Math.max(-1, Math.min(1, input[i]));
+    view.setInt16(offset, s < 0 ? s * 0x8000 : s * 0x7fff, true);
   }
 }

@@ -231,5 +231,34 @@ export const MASTERING_PRESETS: Record<string, MasteringPreset> = {
       width: 1.3
     },
     outputGain: 4
+  },
+  voiceClean: {
+    name: 'Voice Clean',
+    description: 'Optimized for vocal clarity and intelligibility',
+    eq: {
+      lowShelf: { frequency: 120, gain: -2.5 },
+      midPeak: { frequency: 3000, gain: 2.8, q: 1.0 },
+      highShelf: { frequency: 8000, gain: -1.0 }
+    },
+    compression: {
+      threshold: -16,
+      knee: 8,
+      ratio: 3.0,
+      attack: 0.005,
+      release: 0.3
+    },
+    limiter: {
+      threshold: -1.0,
+      release: 0.06
+    },
+    saturation: {
+      enabled: false,
+      drive: 0
+    },
+    stereoWidth: {
+      enabled: true,
+      width: 1.0
+    },
+    outputGain: 2.5
   }
 };

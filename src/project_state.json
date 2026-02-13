@@ -1,24 +1,22 @@
 {
   "schemaVersion": "1.0.0",
   "projectStateVersion": 3,
-  "summary": "New project",
+  "summary": "App draft Version 9 approved; build and production deployment initiated.",
   "architectural_notes": [],
-  "known_issues": [
-    "App is encountering a runtime error when pressing Play (\"erro de execução de play\")."
-  ],
-  "isFixRequest": true,
+  "known_issues": [],
+  "isFixRequest": false,
   "existing_features": [
     {
-      "id": "feature-fix-the-play-runtime-error-in-mastering-studio-by-making-the-audio-playback-chain-compatible-with-both-mono-and-stereo-source-files-e-g-do-not-create-use-a-2-channel-stereo-width-splitter-merger-path-when-the-loaded-audio-buffer-has-1-channel",
-      "title": "Fix the Play runtime error in Mastering Studio by making the audio playback chain compatible with both mono and stereo source files (e.g., do not create/use a 2-channel stereo-width splitter/merger path when the loaded audio buffer has 1 channel).",
+      "id": "feature-promote-the-current-approved-draft-app-draft-version-9-to-production-by-deploying-both-the-frontend-and-the-backend-canister-s-to-the-production-environment",
+      "title": "Promote the current approved draft (App draft Version 9) to production by deploying both the frontend and the backend canister(s) to the production environment.",
       "reqIds": [
         "REQ-1"
       ],
       "version": 1
     },
     {
-      "id": "feature-fix-wav-export-rendering-so-it-does-not-throw-runtime-errors-for-mono-source-files-by-making-the-offline-mastering-chain-compatible-with-the-source-buffer-channel-count-avoid-forcing-a-2-channel-splitter-merger-when-rendering-1-channel-audio",
-      "title": "Fix WAV export rendering so it does not throw runtime errors for mono source files by making the offline mastering chain compatible with the source buffer channel count (avoid forcing a 2-channel splitter/merger when rendering 1-channel audio).",
+      "id": "feature-run-a-production-smoke-test-after-deployment-to-verify-core-flows-load-landing-page-authenticate-with-internet-identity-navigate-to-mastering-studio-upload-an-audio-file-apply-a-preset-export-wav-and-verify-projects-list-loads-updates",
+      "title": "Run a production smoke test after deployment to verify core flows: load landing page, authenticate with Internet Identity, navigate to Mastering Studio, upload an audio file, apply a preset, export WAV, and verify projects list loads/updates.",
       "reqIds": [
         "REQ-2"
       ],
@@ -26,7 +24,7 @@
     }
   ],
   "new_feature_requests": [],
-  "projectName": "Fix runtime error when pressing Play in Mastering Studio",
+  "projectName": "Promote App Draft Version 9 to Production",
   "clarification_mode": "instant",
   "clarification_rounds": 0
 }
